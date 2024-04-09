@@ -1,0 +1,58 @@
+
+### get friends
+GET http://localhost:8080/friendship/api
+
+### get friends
+GET http://localhost:8080/api/users/userpanel
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBjby5wbCIsImlhdCI6MTcwMjkxODc1NCwiZXhwIjoxNzAyOTIwMTk0fQ.EMXjtjrx9GBz29nS-x2KnlXGhfe8bKqG0iSVaol3b6MlXmCztDupfAAWpyWZjdLw
+
+
+
+### add friend
+POST http://localhost:8080/friendship/api?friendshipId=1&isAccepted=false
+
+### invite Friend
+POST http://localhost:8080/friendship/api/invite?friendEmail="admin4@co.pl"
+
+
+### get public events
+GET http://localhost:8080/api/events
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBjby5wbCIsImlhdCI6MTcwMjkxODc1NCwiZXhwIjoxNzAyOTIwMTk0fQ.EMXjtjrx9GBz29nS-x2KnlXGhfe8bKqG0iSVaol3b6MlXmCztDupfAAWpyWZjdLw
+
+
+### get public events
+POST http://localhost:8080/api/events/event
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBjby5wbCIsImlhdCI6MTcwMjkxNzAyNiwiZXhwIjoxNzAyOTE4NDY2fQ.QiWLib3lYg14C_Xy7mOfxyiU51Jpi3MCfcsosoSUXC0cVgVufHR3NYo51_4UNxnz
+
+{
+    "description" : "Testowe wydarzenie",
+    "date" : 123421312,
+    "isPrivate" : true,
+    "location" : {
+        "address" : "Warsiawa",
+        "lat" : 12.423543,
+        "lng" : 17.253453
+    },
+    "name" : "Testowy"
+}
+
+
+### get friends panel
+GET http://localhost:8080/api/friendship
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBjby5wbCIsImlhdCI6MTcwNDExMzA5OSwiZXhwIjoxNzA0MTczMDk5fQ.gmIEogHzmelhXQC5MayCV-6G2e-gry_VFaxdFm1LyI0UCk3DLajuXAR8nhuFtVg9
+
+
+### manage invitation
+POST http://localhost:8080/api/friendship/invitation?friendshipId=1&isAccepted=true
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBjby5wbCIsImlhdCI6MTcwNDExMzA5OSwiZXhwIjoxNzA0MTczMDk5fQ.gmIEogHzmelhXQC5MayCV-6G2e-gry_VFaxdFm1LyI0UCk3DLajuXAR8nhuFtVg9
+
+
+### delete friendship
+DELETE http://localhost:8080/api/friendship/1
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBjby5wbCIsImlhdCI6MTcwNDExMzA5OSwiZXhwIjoxNzA0MTczMDk5fQ.gmIEogHzmelhXQC5MayCV-6G2e-gry_VFaxdFm1LyI0UCk3DLajuXAR8nhuFtVg9
+
+
+### invite friend
+POST http://localhost:8080/api/friendship?friendId=1
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBjby5wbCIsImlhdCI6MTcwNDExMzA5OSwiZXhwIjoxNzA0MTczMDk5fQ.gmIEogHzmelhXQC5MayCV-6G2e-gry_VFaxdFm1LyI0UCk3DLajuXAR8nhuFtVg9

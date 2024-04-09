@@ -1,0 +1,15 @@
+
+### Find user by id
+GET http://localhost:3000/api/auth/2
+
+
+### Find all users
+GET http://localhost:3000/api/auth?email=dasdass@om.pl	
+
+
+### Remove user by id
+DELETE http://localhost:3000/api/auth/2
+
+
+### sign out user
+POST http://localhost:3000/api/auth/signout

@@ -1,0 +1,15 @@
+@use '../../styles/variables.scss';
+
+.footer {
+  background-color: variables.$violet;
+  width: 100%;
+  align-self: center;
+  background-position: center;
+  background-size: cover;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+  background-color: variables.$very-dark-blue1;
+}

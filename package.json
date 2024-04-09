@@ -1,0 +1,15 @@
+{
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "turbo": "^1.13.2"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch"
+  },
+  "workspaces": [
+    "/apps/*"
+  ]
+}
