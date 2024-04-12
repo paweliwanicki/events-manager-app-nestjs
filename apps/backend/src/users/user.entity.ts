@@ -14,7 +14,16 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
   @Column()
-  username: string;
+  firstName: string;
+
+  @Column()
+  lastName: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  dateOfBirth: number;
 
   @Column({ default: 'en' })
   lang: string;

@@ -4,7 +4,9 @@ export class UserDto {
   @Expose()
   id: number;
   @Expose()
-  username: string;
+  firstName: string;
+  @Expose()
+  lastName: string;
   @Expose()
   isAdmin: boolean;
   @Expose()

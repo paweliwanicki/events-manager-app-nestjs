@@ -40,6 +40,7 @@
     border-radius: 6px;
     background: variables.$white;
     color: variables.$very-dark-blue;
+    outline: 2px solid variables.$light-grey;
 
     .tooltipError {
       width: auto;

@@ -45,7 +45,7 @@ label.checkbox {
       &:checked {
         ~ {
           .checkmark {
-            background-color: variables.$violet;
+            background-color: variables.$dark-grey;
             &:after {
               display: block;
             }
@@ -57,7 +57,7 @@ label.checkbox {
       input {
         ~ {
           .checkmark {
-            background-color: $background-color_2;
+            background-color: variables.$grey;
           }
         }
       }

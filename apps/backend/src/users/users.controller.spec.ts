@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { UpdateUserDto } from './dtos/update-user.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -9,14 +10,14 @@ describe('UsersController', () => {
     findOneById: jest.fn((id) => {
       const user = {
         id: +id,
-        username: 'Test',
+        email: 'Test',
       };
       return user;
     }),
-    findOneByUsername: jest.fn((username) => {
+    findOneByUsername: jest.fn((email) => {
       const user = {
         id: Date.now(),
-        username,
+        email,
       };
       return user;
     }),
@@ -30,7 +31,7 @@ describe('UsersController', () => {
     remove: jest.fn((id) => {
       const user = {
         id: +id,
-        username: 'Test',
+        email: 'Test',
       };
       return user;
     }),
@@ -56,28 +57,28 @@ describe('UsersController', () => {
     const id = '1';
     expect(await controller.findUser(id)).toEqual({
       id: +id,
-      username: 'Test',
+      email: 'Test',
     });
 
     expect(mockUserService.findOneById).toHaveBeenCalledWith(+id);
   });
 
-  it('should get a user by username', () => {
-    const username = 'Test1';
-    expect(controller.findUserByUsername(username)).toEqual({
+  it('should get a user by email', () => {
+    const email = 'Test1';
+    expect(controller.findUserByEmal(email)).toEqual({
       id: expect.any(Number),
-      username,
+      email,
     });
 
-    expect(mockUserService.findOneByUsername).toHaveBeenCalledWith(username);
+    expect(mockUserService.findOneByUsername).toHaveBeenCalledWith(email);
   });
 
   it('should update a user', () => {
     const id = 1;
-    const dto = { username: 'Josh', password: 'newpass' };
+    const dto = { email: 'Josh', password: 'newpass' } as UpdateUserDto;
     expect(controller.updateUser('1', dto)).toEqual({
       id: 1,
-      username: dto.username,
+      email: dto.email,
     });
 
     expect(mockUserService.update).toHaveBeenCalledWith(id, dto);
@@ -87,7 +88,7 @@ describe('UsersController', () => {
     const id = '1';
     expect(controller.removeUser(id)).toEqual({
       id: +id,
-      username: 'Test',
+      email: 'Test',
     });
 
     expect(mockUserService.remove).toHaveBeenCalledWith(+id);

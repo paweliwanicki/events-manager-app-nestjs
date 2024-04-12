@@ -10,11 +10,15 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  create(username: string, password: string) {
+  create(data: Partial<User>, password: string) {
+    const { firstName, lastName, email, dateOfBirth } = data;
     const user = this.userRepository.create({
-      username,
+      firstName,
+      lastName,
+      email,
+      dateOfBirth,
       password,
-      createdAt: Math.floor(new Date().getTime() / 1000),
+      createdAt: Math.floor(Date.now() / 1000),
     });
     return this.userRepository.save(user);
   }
@@ -24,8 +28,8 @@ export class UsersService {
     return this.userRepository.findOneBy({ id });
   }
 
-  findOneByUsername(username: string) {
-    return this.userRepository.findOneBy({ username });
+  findOneByEmail(email: string) {
+    return this.userRepository.findOneBy({ email });
   }
 
   findOne(where: any) {
@@ -37,7 +41,7 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException(AUTH_EXCEPTION_MESSAGES.NOT_FOUND);
     }
-    user.updatedAt = Math.floor(new Date().getTime() / 1000);
+    user.updatedAt = Math.floor(Date.now() / 1000);
     Object.assign(user, attrs);
     return this.userRepository.save(user);
   }

@@ -5,6 +5,8 @@ import { AUTH_EXCEPTION_MESSAGES } from './auth-exception.messages';
 import { User } from '../users/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { hash, genSalt, compare } from 'bcrypt';
+import { SignUpUserDto } from 'src/users/dtos/sign-up-user.dto';
+import { ResponseStatus } from 'src/enums/ResponseStatus';
 
 @Injectable()
 export class AuthenticationService {
@@ -14,52 +16,63 @@ export class AuthenticationService {
     private configService: ConfigService,
   ) {}
 
-  async userSignIn(username: string, password: string) {
-    const user = await this.validateUser(username, password);
-    const [accessToken, refreshToken] = await Promise.all([
-      this.getJwtToken(user.id, user),
-      this.getRefreshToken(user.id),
-    ]);
+  async userSignIn(email: string, password: string) {
+    try {
+      const user = await this.validateUser(email, password);
+      if (!user)
+        throw new BadRequestException({
+          status: ResponseStatus.ERROR,
+          message: AUTH_EXCEPTION_MESSAGES.WRONG_CREDENTIALS,
+        });
+      const [accessToken, refreshToken] = await Promise.all([
+        this.getJwtToken(user.id, user),
+        this.getRefreshToken(user.id),
+      ]);
 
-    await this.usersService.update(user.id, {
-      refreshToken,
-    });
-    return {
-      user,
-      accessToken,
-      refreshToken,
-    };
+      await this.usersService.update(user.id, {
+        refreshToken,
+      });
+
+      return {
+        user,
+        accessToken,
+        refreshToken,
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 
-  async userSignUp(username: string, password: string) {
+  async userSignUp(userDto: SignUpUserDto) {
+    const { email, password } = userDto;
     try {
-      const currentUser = await this.validateUser(username, password);
+      const currentUser = await this.validateUser(email, password, false);
       if (currentUser) {
         throw new BadRequestException({
-          status: 404,
+          status: ResponseStatus.ERROR,
           message: AUTH_EXCEPTION_MESSAGES.USER_IS_IN_USE,
         });
       }
-    } catch (err) {
-      console.error(err);
+      const salt = await genSalt(8);
+      const hashed = await hash(password, salt);
+      const user = await this.usersService.create(userDto, hashed);
+
+      const [accessToken, refreshToken] = await Promise.all([
+        this.getJwtToken(user.id, user),
+        this.getRefreshToken(user.id),
+      ]);
+
+      await this.usersService.update(user.id, {
+        refreshToken,
+      });
+      return {
+        user,
+        accessToken,
+        refreshToken,
+      };
+    } catch (error) {
+      throw error;
     }
-    const salt = await genSalt(8);
-    const hashed = await hash(password, salt);
-    const user = await this.usersService.create(username, hashed);
-
-    const [accessToken, refreshToken] = await Promise.all([
-      this.getJwtToken(user.id, user),
-      this.getRefreshToken(user.id),
-    ]);
-
-    await this.usersService.update(user.id, {
-      refreshToken,
-    });
-    return {
-      user,
-      accessToken,
-      refreshToken,
-    };
   }
 
   async userSignOut(userId: number) {
@@ -68,16 +81,18 @@ export class AuthenticationService {
     });
   }
 
-  async validateUser(username: string, password: string) {
-    const user = await this.usersService.findOneByUsername(username);
-    if (user) {
+  async validateUser(email: string, password: string, signin = true) {
+    const user = await this.usersService.findOneByEmail(email);
+    if (user && signin) {
       const checkPassword = await compare(password, user.password);
-      if (checkPassword) return user;
+      if (!checkPassword) {
+        throw new BadRequestException({
+          status: ResponseStatus.ERROR,
+          message: AUTH_EXCEPTION_MESSAGES.WRONG_CREDENTIALS,
+        });
+      }
     }
-    throw new BadRequestException({
-      status: 404,
-      message: AUTH_EXCEPTION_MESSAGES.WRONG_CREDENTIALS,
-    });
+    return user;
   }
 
   async refreshJwtToken(refreshToken: string) {
@@ -110,10 +125,13 @@ export class AuthenticationService {
   }
 
   async getJwtToken(sub: number, user: User) {
+    const { firstName, lastName, email, createdAt, isAdmin } = user;
     const userDetails: Partial<User> = {
-      username: user.username,
-      isAdmin: user.isAdmin,
-      createdAt: user.createdAt,
+      firstName,
+      lastName,
+      email,
+      isAdmin,
+      createdAt,
     };
 
     return await this.jwtService.signAsync(

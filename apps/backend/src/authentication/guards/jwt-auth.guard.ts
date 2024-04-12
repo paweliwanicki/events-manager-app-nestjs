@@ -43,11 +43,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       if (isValidAccessToken) return this.activate(context);
     } catch (err) {
       this.logger.error(err.message);
-      if (err.message === 'jwt expired') {
-        await this.handleRefreshToken(request, response);
-        return this.activate(context);
+      if (err.message !== 'jwt expired') {
+        return false;
       }
-      return false;
+      await this.handleRefreshToken(request, response);
+      return this.activate(context);
     }
   }
 

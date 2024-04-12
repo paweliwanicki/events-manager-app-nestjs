@@ -29,8 +29,8 @@ export class UsersController {
   }
 
   @Get()
-  findUserByUsername(@Query('username') username: string) {
-    return this.usersService.findOneByUsername(username);
+  findUserByEmal(@Query('email') email: string) {
+    return this.usersService.findOneByEmail(email);
   }
 
   @Delete('/:id')
