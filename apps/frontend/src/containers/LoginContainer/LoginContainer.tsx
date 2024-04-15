@@ -19,14 +19,7 @@ const FORM_CHANGE_TEXT: Record<Form, Record<string, string>> = {
 } as const;
 
 const LoginContainer = () => {
-  const {
-    message,
-    responseStatus,
-    handleSignIn,
-    isFetching,
-    handleSignUp,
-    clearMessage,
-  } = useSignForm();
+  const { handleSignIn, isFetching, handleSignUp } = useSignForm();
 
   const [activeForm, setActiveForm] = useState<Form>('SIGN_IN');
 
@@ -61,8 +54,7 @@ const LoginContainer = () => {
 
   const handleChangeSignForm = useCallback(() => {
     setActiveForm(activeForm === 'SIGN_IN' ? 'SIGN_UP' : 'SIGN_IN');
-    clearMessage();
-  }, [activeForm, clearMessage]);
+  }, [activeForm]);
 
   return (
     <div className={classes.loginContainer}>
@@ -72,18 +64,6 @@ const LoginContainer = () => {
       ) : (
         <SignInForm onSubmit={handleSignInOnSubmit} />
       )}
-
-      <div className={classes.signResponseMessage}>
-        {message && (
-          <p
-            className={
-              responseStatus ? classes[responseStatus.toLowerCase()] : ''
-            }
-          >
-            {message}
-          </p>
-        )}
-      </div>
       <div className={classes.formChangeBox}>
         <p>{FORM_CHANGE_TEXT[activeForm].label}</p>
         <button

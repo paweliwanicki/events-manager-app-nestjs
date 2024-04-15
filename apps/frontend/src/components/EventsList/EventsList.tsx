@@ -7,6 +7,7 @@ import ContextMenu, {
 import { useUser } from '../../contexts/userContext';
 import { EventType, useEvents } from '../../contexts/eventsContext';
 import { useSnackBar } from '../../contexts/snackBarContext';
+import { ResponseStatus } from '../../enums/ResponseStatus';
 
 type EventsListProps = {
   data: Event[];
@@ -54,7 +55,7 @@ const EventsList = ({
     async (id: number) => {
       const response = await joinEvent(id);
       if (response) {
-        if (response.status !== 'Success') {
+        if (response.status !== ResponseStatus.SUCCESS) {
           handleShowSnackBar(
             'Error during joining to the event! Please try again.',
             'error'
@@ -86,7 +87,7 @@ const EventsList = ({
     async (id: number) => {
       const response = await leaveEvent(id);
       if (response) {
-        if (response.status !== 'Success') {
+        if (response.status !== ResponseStatus.SUCCESS) {
           handleShowSnackBar(
             'Error during leaving event! Please try again.',
             'error'

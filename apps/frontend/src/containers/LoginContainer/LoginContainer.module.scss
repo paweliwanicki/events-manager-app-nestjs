@@ -11,8 +11,14 @@
   background-size: cover;
   margin: auto;
   transition: background-image linear 0.5s, background-color linear 0.5s;
-  color: variables.$light-grey;
-  background-color: variables.$dark-blue1;
+  color: variables.$midnight;
+  background-color: variables.$very-light-grey;
+
+  h2 {
+    text-transform: uppercase;
+    font-family: variables.$font-family-bold;
+    color: variables.$very-dark-blue1;
+  }
 
   .signResponseMessage {
     min-height: 45px;

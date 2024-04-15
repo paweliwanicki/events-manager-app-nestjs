@@ -1,40 +1,36 @@
-import { ReactNode, useCallback, useState, useMemo } from "react";
-import { setJwtToken, useApi } from "./useApi";
-import { useNavigate } from "react-router-dom";
-import { RoutePath } from "../enums/RoutePath";
-import { HttpMethod } from "../enums/HttpMethods";
-import { User } from "../types/User";
-import { jwtDecode } from "jwt-decode";
-import { useUser } from "../contexts/userContext";
+import { useCallback, useState, useMemo } from 'react';
+import { setJwtToken, useApi } from './useApi';
+import { useNavigate } from 'react-router-dom';
+import { RoutePath } from '../enums/RoutePath';
+import { HttpMethod } from '../enums/HttpMethods';
+import { User } from '../types/User';
+import { jwtDecode } from 'jwt-decode';
+import { useUser } from '../contexts/userContext';
+import { useSnackBar } from '../contexts/snackBarContext';
+import { ResponseStatus } from '../enums/ResponseStatus';
 
 type InputError =
-  | "EMPTY"
-  | "WRONG_PASSWORD_FORMAT"
-  | "PASSWORDS_NOT_MATCH"
-  | "WRONG_EMAIL_FORMAT";
+  | 'EMPTY'
+  | 'WRONG_PASSWORD_FORMAT'
+  | 'PASSWORDS_NOT_MATCH'
+  | 'WRONG_EMAIL_FORMAT';
 
 type SignFormInput =
-  | "EMAIL"
-  | "FIRSTNAME"
-  | "LASTNAME"
-  | "DATE_OF_BIRTH"
-  | "PASSWORD"
-  | "CONFIRM_PASSWORD"
-  | "TERMS";
-
-type ResponseStatus = "Success" | "Error" | undefined;
+  | 'EMAIL'
+  | 'FIRSTNAME'
+  | 'LASTNAME'
+  | 'DATE_OF_BIRTH'
+  | 'PASSWORD'
+  | 'CONFIRM_PASSWORD'
+  | 'TERMS';
 
 type SignResponse = {
   message: string;
   status: ResponseStatus;
-  data?: {
-    jwtToken: string;
-  };
+  jwtToken: string;
 };
 
 type SignForm = {
-  message: ReactNode;
-  responseStatus: ResponseStatus;
   errors: {
     emailError: string | undefined;
     passwordError: string | undefined;
@@ -54,7 +50,6 @@ type SignForm = {
     termsCheckIsValidated: boolean;
   };
   isFetching: boolean;
-  clearMessage: () => void;
   clearValidationAndError: (input: SignFormInput) => void;
   validateSignInForm: (email: string, password: string) => boolean;
   validateSignUpForm: (
@@ -79,19 +74,18 @@ type SignForm = {
 };
 
 const INPUT_ERRORS_MESSAGES: Record<InputError, string> = {
-  EMPTY: "Can not be empty!",
-  WRONG_PASSWORD_FORMAT:
-    "Password does not meet requirements!",
-  WRONG_EMAIL_FORMAT: "E-mail address must be an valid email format!",
-  PASSWORDS_NOT_MATCH: "Password and confirm password do not match!",
+  EMPTY: 'Can not be empty!',
+  WRONG_PASSWORD_FORMAT: 'Password does not meet requirements!',
+  WRONG_EMAIL_FORMAT: 'E-mail address must be an valid email format!',
+  PASSWORDS_NOT_MATCH: 'Password and confirm password do not match!',
 } as const;
 
 const EMAIL_REGEX = new RegExp(
-  "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
-  "i"
+  '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,10}$',
+  'i'
 );
 const PASSWORD_REGEX = new RegExp(
-  "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[#?!@$%^&*-]).{8,}$"
+  '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[#?!@$%^&*-]).{8,}$'
 );
 
 export const useSignForm = (): SignForm => {
@@ -99,8 +93,6 @@ export const useSignForm = (): SignForm => {
   const { fetch, isFetching } = useApi();
   const { changeUser } = useUser();
 
-  const [message, setMessage] = useState<ReactNode>();
-  const [responseStatus, setResponseStatus] = useState<ResponseStatus>();
   const [emailError, setEmailError] = useState<string | undefined>();
   const [firstNameError, setFirstNameError] = useState<string | undefined>();
   const [lastNameError, setLastNameError] = useState<string | undefined>();
@@ -112,6 +104,7 @@ export const useSignForm = (): SignForm => {
     string | undefined
   >();
   const [termsCheckError, setTermsError] = useState<boolean>(false);
+  const { handleShowSnackBar } = useSnackBar();
 
   const [emailIsValidated, setEmailIsValidated] = useState<boolean>(false);
   const [firstNameIsValidated, setFirstNameIsValidated] =
@@ -129,44 +122,32 @@ export const useSignForm = (): SignForm => {
 
   const handleSignResponse = useCallback(
     (response: SignResponse) => {
-      setResponseStatus(response.status);
-      if (response.status === "Success") {
-        const jwtToken = response.data?.jwtToken ?? "";
-        setJwtToken(jwtToken);
+      const { status, message, jwtToken } = response;
+      handleShowSnackBar(message, status === 'success' ? 'success' : 'error');
+      if (status === 'success' && jwtToken) {
         const user: User = jwtDecode(jwtToken);
         if (user) {
+          setJwtToken(jwtToken);
           changeUser(user);
           navigate(RoutePath.DASHBOARD);
         }
       }
-      if (response.message) {
-        setMessage(response.message);
-        setTimeout(() => {
-          setMessage("");
-        }, 3000);
-      }
     },
-    [changeUser, navigate]
+    [changeUser, navigate, handleShowSnackBar]
   );
-  const handleSignUpResponse = useCallback((response: SignResponse) => {
-    setResponseStatus(response.status);
-    if (response.message) {
-      setMessage(response.message);
-      setTimeout(() => {
-        setMessage("");
-      }, 3000);
-    }
-    if (response.status === "Success") {
-      return true;
-    }
-
-    return false;
-  }, []);
+  const handleSignUpResponse = useCallback(
+    (response: SignResponse) => {
+      const { status, message } = response;
+      handleShowSnackBar(message, status === 'success' ? 'success' : 'error');
+      return status === 'success';
+    },
+    [handleShowSnackBar]
+  );
 
   const handleSignIn = useCallback(
     async (email: string, password: string) => {
       const [response] = await fetch<SignResponse>(HttpMethod.POST, {
-        path: "/api/auth/signin",
+        path: '/api/auth/signin',
         payload: JSON.stringify({
           email,
           password,
@@ -190,7 +171,7 @@ export const useSignForm = (): SignForm => {
         ? Math.floor(dateOfBirth.getTime() / 1000)
         : 0;
       const [response] = await fetch<SignResponse>(HttpMethod.POST, {
-        path: "/api/auth/signup",
+        path: '/api/auth/signup',
         payload: JSON.stringify({
           firstName,
           lastName,
@@ -213,12 +194,12 @@ export const useSignForm = (): SignForm => {
   const validateSignInForm = useCallback((email: string, password: string) => {
     let isValid = true;
 
-    if (email === "") {
+    if (email === '') {
       setEmailError(INPUT_ERRORS_MESSAGES.EMPTY);
       isValid = false;
     }
 
-    if (password === "") {
+    if (password === '') {
       setPasswordError(INPUT_ERRORS_MESSAGES.EMPTY);
       isValid = false;
     }
@@ -241,7 +222,7 @@ export const useSignForm = (): SignForm => {
     ) => {
       let isValid = true;
 
-      if (email === "") {
+      if (email === '') {
         setEmailError(INPUT_ERRORS_MESSAGES.EMPTY);
         isValid = false;
       } else if (!EMAIL_REGEX.test(email)) {
@@ -249,12 +230,12 @@ export const useSignForm = (): SignForm => {
         isValid = false;
       }
 
-      if (firstName === "") {
+      if (firstName === '') {
         setFirstNameError(INPUT_ERRORS_MESSAGES.EMPTY);
         isValid = false;
       }
 
-      if (lastName === "") {
+      if (lastName === '') {
         setLastNameError(INPUT_ERRORS_MESSAGES.EMPTY);
         isValid = false;
       }
@@ -264,7 +245,7 @@ export const useSignForm = (): SignForm => {
         isValid = false;
       }
 
-      if (password === "") {
+      if (password === '') {
         setPasswordError(INPUT_ERRORS_MESSAGES.EMPTY);
         isValid = false;
       } else if (!PASSWORD_REGEX.test(password)) {
@@ -272,7 +253,7 @@ export const useSignForm = (): SignForm => {
         isValid = false;
       }
 
-      if (confirmPassword === "") {
+      if (confirmPassword === '') {
         setConfirmPasswordError(INPUT_ERRORS_MESSAGES.EMPTY);
         isValid = false;
       } else if (confirmPassword !== password) {
@@ -298,10 +279,6 @@ export const useSignForm = (): SignForm => {
     []
   );
 
-  const clearMessage = useCallback(() => {
-    setMessage(undefined);
-  }, []);
-
   const clearErrors = useCallback(() => {
     setEmailError(undefined);
     setPasswordError(undefined);
@@ -316,7 +293,7 @@ export const useSignForm = (): SignForm => {
     setTermsCheckIsValidated(false);
   }, []);
 
-  const validationCleaners: Record<SignFormInput | "ALL", () => void> =
+  const validationCleaners: Record<SignFormInput | 'ALL', () => void> =
     useMemo(() => {
       return {
         EMAIL: () => {
@@ -356,14 +333,12 @@ export const useSignForm = (): SignForm => {
 
   const clearValidationAndError = useCallback(
     (input?: SignFormInput) => {
-      validationCleaners[input ?? "ALL"]();
+      validationCleaners[input ?? 'ALL']();
     },
     [validationCleaners]
   );
 
   return {
-    message,
-    responseStatus,
     isFetching,
     errors: {
       emailError,
@@ -383,7 +358,6 @@ export const useSignForm = (): SignForm => {
       confirmPasswordIsValidated,
       termsCheckIsValidated,
     },
-    clearMessage,
     clearValidationAndError,
     validateSignInForm,
     validateSignUpForm,

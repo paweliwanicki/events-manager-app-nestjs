@@ -7,7 +7,7 @@ import { useSnackBar } from '../../../contexts/snackBarContext';
 const SnackBar = () => {
   const { play: openAnimation } = useMotionAnimate(
     `.${classes.snackBar}`,
-    { top: '40px' },
+    { top: '20px' },
     {
       duration: 0.5,
       easing: 'ease-in',
@@ -23,7 +23,7 @@ const SnackBar = () => {
     }
   );
 
-  const { content, isShowing, variant, setIsShowing } = useSnackBar();
+  const { content, variant, isShowing, setIsShowing } = useSnackBar();
 
   const handleCloseSnackBar = useCallback(() => {
     setIsShowing(false);

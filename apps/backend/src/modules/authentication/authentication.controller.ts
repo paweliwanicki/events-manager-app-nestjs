@@ -1,10 +1,21 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  FileTypeValidator,
+  Get,
+  MaxFileSizeValidator,
+  ParseFilePipe,
+  Post,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { SignUpUserDto } from '../users/dtos/sign-up-user.dto';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { User } from '../users/user.entity';
 import { SignInUserDto } from '../users/dtos/sign-in-user.dto';
-import { Serialize } from '../interceptors/serialize.interceptor';
+import { Serialize } from '../../interceptors/serialize.interceptor';
 import { UserDto } from '../users/dtos/user.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Response } from 'express';
@@ -12,6 +23,9 @@ import { setJwtTokensCookies } from './utils/utils';
 import { UseGuards } from '@nestjs/common/decorators/core/use-guards.decorator';
 import { AUTH_MESSAGES } from './auth-exception.messages';
 import { ResponseStatus } from 'src/enums/ResponseStatus';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { existsSync, mkdirSync } from 'fs';
 
 @Serialize(UserDto) // interceptor
 @Controller('auth')
@@ -25,10 +39,52 @@ export class AuthenticationController {
     return user;
   }
 
+  // async uploadUserAvatar(
+  //   @UploadedFile(
+  //     new ParseFilePipe({
+  //       validators: [
+  //         new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+  //         new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
+  //       ],
+  //     }),
+  //   )
+  //   file: Express.Multer.File,
+  //   @Body('companyId') companyId: number,
+  // ) {
+  //   await this.companyService.setCompanyLogo(companyId, file);
+  //   return {
+  //     file: file.buffer?.toString(),
+  //   };
+  // }
   @Post('/signup')
-  async createUser(
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: diskStorage({
+        destination: (req: never, file: never, cb: any) => {
+          const uploadPath = 'uploads/avatars';
+          if (!existsSync(uploadPath)) {
+            mkdirSync(uploadPath);
+          }
+          cb(null, uploadPath);
+        },
+        filename: (req: never, file: any, cb: any) => {
+          cb(null, `${file.originalname.replace(/\s/g, '_')}`);
+        },
+      }),
+    }),
+  )
+  async SignUpUser(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
     @Body() body: SignUpUserDto,
-    @Res({ passthrough: true }) response: Response,
+    @Res() response: Response,
   ) {
     try {
       const { accessToken, refreshToken } =
@@ -46,10 +102,7 @@ export class AuthenticationController {
   }
 
   @Post('/signin')
-  async signInUser(
-    @Body() body: SignInUserDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
+  async signInUser(@Body() body: SignInUserDto, @Res() response: Response) {
     const { email, password } = body;
     try {
       const { accessToken, refreshToken } =

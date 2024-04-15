@@ -7,6 +7,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 
 @Entity()
@@ -44,9 +45,6 @@ export class User {
   @Column({ nullable: true })
   @Exclude()
   refreshToken: string;
-
-  // @OneToMany(() => Offer, (offer) => offer.createdBy)
-  // offers: Offer[];
 
   @AfterInsert()
   logInsert() {

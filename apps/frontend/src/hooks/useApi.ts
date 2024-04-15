@@ -1,7 +1,5 @@
-import { useCallback, useState } from "react";
-import { HttpMethod } from "../enums/HttpMethods";
-
-export type ResponseStatus = "Success" | "Error" | undefined;
+import { useCallback, useState } from 'react';
+import { HttpMethod } from '../enums/HttpMethods';
 
 type RequestOptions = {
   path: string;
@@ -20,10 +18,6 @@ type ApiService = {
     method: HttpMethod,
     params: RequestOptions
   ) => Promise<[body: T, resParams: ResponseParams]>;
-  fetchWithJwt: <T>(
-    method: HttpMethod,
-    params: RequestOptions
-  ) => Promise<[body: T, resParams: ResponseParams]>;
 };
 
 const request = async (
@@ -35,7 +29,7 @@ const request = async (
   const { path, payload, contentType } = params;
 
   const headers = {
-    "Content-Type": contentType ? contentType : "application/json",
+    'Content-Type': contentType ? contentType : 'application/json',
     ...customHeaders,
   };
 
@@ -48,22 +42,22 @@ const request = async (
   try {
     body = (await response.json()) as ResponseParams;
   } catch {
-    console.error("Error while parsing the response :(");
+    console.error('Error while parsing the response :(');
   }
 
   return [body, { statusCode: response.status, message: response.statusText }];
 };
 
 export const setJwtToken = (token: string) => {
-  localStorage.setItem("token", token);
+  localStorage.setItem('token', token);
 };
 
 export const unsetJwtToken = () => {
-  localStorage.removeItem("token");
+  localStorage.removeItem('token');
 };
 
 export const getJwtToken = () => {
-  return localStorage.getItem("token");
+  return localStorage.getItem('token');
 };
 
 export const useApi = (): ApiService => {
@@ -79,23 +73,8 @@ export const useApi = (): ApiService => {
     []
   );
 
-  const fetchWithJwt = useCallback(
-    async (method: HttpMethod, params: RequestOptions) => {
-      const token = getJwtToken();
-      const headers = { Authorization: `Bearer ${token}` };
-
-      setIsFetching(true);
-      const response = await request(method, params, headers).finally(() =>
-        setIsFetching(false)
-      );
-      return response;
-    },
-    []
-  );
-
   return {
     isFetching,
     fetch,
-    fetchWithJwt,
   };
 };

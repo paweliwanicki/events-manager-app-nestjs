@@ -2,11 +2,12 @@ import { ReactNode, useCallback, useState, useMemo } from 'react';
 import { useApi } from './useApi';
 import { HttpMethod } from '../enums/HttpMethods';
 import { useSnackBar } from '../contexts/snackBarContext';
+import { ResponseStatus } from '../enums/ResponseStatus';
+import { Event } from '../types/Event';
 
 type InputError = 'EMPTY';
 type LocationMapError = 'NOT_SELECTED';
 type NewEventFormInput = 'NAME' | 'DESCRIPTION' | 'EVENT_DATE' | 'LOCATION';
-type ResponseStatus = 'Success' | 'Error' | undefined;
 
 export type EventLocation = {
   lat: number;
@@ -62,7 +63,7 @@ const LOCATION_ERROR_MESSAGE: Record<LocationMapError, string> = {
 } as const;
 
 export const useNewEventModal = (): AddEditEventForm => {
-  const { fetch, fetchWithJwt, isFetching } = useApi();
+  const { fetch, isFetching } = useApi();
   const { handleShowSnackBar } = useSnackBar();
 
   const [message, setMessage] = useState<ReactNode>();
@@ -100,25 +101,22 @@ export const useNewEventModal = (): AddEditEventForm => {
       isPrivate: boolean,
       id?: number
     ) => {
-      const httpMethod = id ? HttpMethod.PUT : HttpMethod.POST;
+      const httpMethod = id ? HttpMethod.PATCH : HttpMethod.POST;
       const path = id ? `/api/events/${id}` : '/api/events';
 
-      const status = await fetchWithJwt<AddEditRemoveEventResponse>(
-        httpMethod,
-        {
-          path,
-          payload: JSON.stringify({
-            name,
-            date,
-            description,
-            location,
-            isPrivate,
-          }),
-        }
-      )
+      const status = await fetch<Event>(httpMethod, {
+        path,
+        payload: JSON.stringify({
+          name,
+          date,
+          description,
+          location,
+          isPrivate,
+        }),
+      })
         .then((response) => {
-          const [results] = response;
-          if (results.status !== 'Success') {
+          const [data] = response;
+          if (!data.id) {
             handleShowSnackBar('Error has occured! Please try again.', 'error');
             return false;
           }
@@ -131,7 +129,7 @@ export const useNewEventModal = (): AddEditEventForm => {
         });
       return status;
     },
-    [fetchWithJwt, handleShowSnackBar]
+    [fetch, handleShowSnackBar]
   );
 
   const validateForm = useCallback(

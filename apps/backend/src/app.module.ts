@@ -2,13 +2,15 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthenticationModule } from './authentication/authentication.module';
 import { ValidationPipe } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from './users/users.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { DatabaseConfig } from './config';
+import { AuthenticationModule } from './modules/authentication/authentication.module';
+import { UsersModule } from './modules/users/users.module';
+import { EventsModule } from './modules/events/events.module';
+import { EventsParticipationModule } from './modules/events-participation/events-participation.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { DatabaseConfig } from './config';
     }),
     AuthenticationModule,
     UsersModule,
+    EventsModule,
+    EventsParticipationModule,
   ],
   controllers: [AppController],
   providers: [

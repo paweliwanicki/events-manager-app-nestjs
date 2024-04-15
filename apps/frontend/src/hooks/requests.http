@@ -16,8 +16,10 @@ POST http://localhost:8080/friendship/api/invite?friendEmail="admin4@co.pl"
 
 
 ### get public events
-GET http://localhost:8080/api/events
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBjby5wbCIsImlhdCI6MTcwMjkxODc1NCwiZXhwIjoxNzAyOTIwMTk0fQ.EMXjtjrx9GBz29nS-x2KnlXGhfe8bKqG0iSVaol3b6MlXmCztDupfAAWpyWZjdLw
+GET http://localhost:5173/api/events/my
+
+### get public events
+GET http://localhost:5173/api/events/event/1
 
 
 ### get public events

@@ -12,13 +12,13 @@ https://react.dev/
 
 React is a framework that employs a bundler to automatically compile React, JSX, and ES6 code while handling CSS file prefixes. React is a JavaScript-based UI development library in SPA (single page app) principle. Although React is a library rather than a language, it is widely used in web development. The library first appeared in May 2013 and is now one of the most commonly used frontend libraries for web development.
 
-React offers various extensions for entire application architectural support, such as Flux and React Native, beyond mere UI.
+React events various extensions for entire application architectural support, such as Flux and React Native, beyond mere UI.
 
 ##### Why React?
 
 React’s popularity today has eclipsed that of all other front-end development frameworks. Here is why:
 
-- Easy creation of dynamic applications: React makes it easier to create dynamic web applications because it requires less coding and offers more functionality, as opposed to JavaScript, where coding often gets complex very quickly.
+- Easy creation of dynamic applications: React makes it easier to create dynamic web applications because it requires less coding and events more functionality, as opposed to JavaScript, where coding often gets complex very quickly.
   Improved performance: React uses Virtual DOM, thereby creating web applications faster. Virtual DOM compares the components’ previous states and updates only the items in the Real DOM that were changed, instead of updating all of the components again, as conventional web applications do.
 
 - Reusable components: Components are the building blocks of any React application, and a single app usually consists of multiple components. These components have their logic and controls, and they can be reused throughout the application, which in turn dramatically reduces the application’s development time.

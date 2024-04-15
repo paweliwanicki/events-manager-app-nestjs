@@ -11,7 +11,7 @@ export const setJwtTokensCookies = (
     httpOnly: true,
     secure: false,
     sameSite: 'lax',
-    //expires: new Date(Date.now() + 20 * 60000), // 20min -> 5min more for refresh session
+    expires: new Date(Date.now() + 60 * 60000), // 20min -> 5min more for refresh session
   });
   response.cookie('refreshToken', refreshToken, {
     httpOnly: true,

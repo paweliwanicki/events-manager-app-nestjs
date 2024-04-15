@@ -5,8 +5,8 @@ import { AUTH_EXCEPTION_MESSAGES } from './auth-exception.messages';
 import { User } from '../users/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { hash, genSalt, compare } from 'bcrypt';
-import { SignUpUserDto } from 'src/users/dtos/sign-up-user.dto';
-import { ResponseStatus } from 'src/enums/ResponseStatus';
+import { ResponseStatus } from '../../enums/ResponseStatus';
+import { SignUpUserDto } from '../users/dtos/sign-up-user.dto';
 
 @Injectable()
 export class AuthenticationService {

@@ -56,7 +56,7 @@ const getFriendshipData = (data: Friendship[]) => {
 };
 
 export const useFriendsPanel = (): FriendsPanel => {
-  const { fetchWithJwt, isFetching } = useApi();
+  const { fetch, isFetching } = useApi();
   const { handleShowSnackBar } = useSnackBar();
   const [friendsList, setFriendsList] = useState<FriendShipData[]>([]);
   const [sentFriendRequests, setSendedFriendsRequests] = useState<
@@ -68,12 +68,9 @@ export const useFriendsPanel = (): FriendsPanel => {
   const [otherUsers, setOtherUsers] = useState<Partial<User>[]>([]);
 
   const getFriendsList = useCallback(async () => {
-    const [response] = await fetchWithJwt<FriendsPanelResponse>(
-      HttpMethod.GET,
-      {
-        path: '/api/users/userPanel',
-      }
-    );
+    const [response] = await fetch<FriendsPanelResponse>(HttpMethod.GET, {
+      path: '/api/users/userPanel',
+    });
 
     if (response.status === 'Success' && response.data) {
       const {
@@ -87,16 +84,13 @@ export const useFriendsPanel = (): FriendsPanel => {
       setSendedFriendsRequests(getFriendshipData(sentFriendRequests));
       setOtherUsers(otherUsers);
     }
-  }, [fetchWithJwt]);
+  }, [fetch]);
 
   const addFriend = useCallback(
     async (friendId: string) => {
-      const [response] = await fetchWithJwt<FriendsPanelResponse>(
-        HttpMethod.POST,
-        {
-          path: `/api/friendship?friendId=${friendId}`,
-        }
-      );
+      const [response] = await fetch<FriendsPanelResponse>(HttpMethod.POST, {
+        path: `/api/friendship?friendId=${friendId}`,
+      });
 
       if (response.status === 'Success') {
         getFriendsList();
@@ -109,17 +103,14 @@ export const useFriendsPanel = (): FriendsPanel => {
       );
       return false;
     },
-    [fetchWithJwt, getFriendsList, handleShowSnackBar]
+    [fetch, getFriendsList, handleShowSnackBar]
   );
 
   const removeFriend = useCallback(
     async (id: number) => {
-      const [response] = await fetchWithJwt<FriendsPanelResponse>(
-        HttpMethod.DELETE,
-        {
-          path: `/api/friendship/${id}`,
-        }
-      );
+      const [response] = await fetch<FriendsPanelResponse>(HttpMethod.DELETE, {
+        path: `/api/friendship/${id}`,
+      });
 
       if (response.status === 'Success') {
         getFriendsList();
@@ -130,17 +121,14 @@ export const useFriendsPanel = (): FriendsPanel => {
       return false;
     },
 
-    [fetchWithJwt, getFriendsList, handleShowSnackBar]
+    [fetch, getFriendsList, handleShowSnackBar]
   );
 
   const acceptFriendRequest = useCallback(
     async (id: number) => {
-      const [response] = await fetchWithJwt<FriendsPanelResponse>(
-        HttpMethod.POST,
-        {
-          path: `/api/friendship/invitation?friendshipId=${id}&isAccepted=true`,
-        }
-      );
+      const [response] = await fetch<FriendsPanelResponse>(HttpMethod.POST, {
+        path: `/api/friendship/invitation?friendshipId=${id}&isAccepted=true`,
+      });
 
       if (response.status === 'Success') {
         getFriendsList();
@@ -151,17 +139,14 @@ export const useFriendsPanel = (): FriendsPanel => {
       return false;
     },
 
-    [fetchWithJwt, getFriendsList, handleShowSnackBar]
+    [fetch, getFriendsList, handleShowSnackBar]
   );
 
   const removeFriendRequest = useCallback(
     async (id: number) => {
-      const [response] = await fetchWithJwt<FriendsPanelResponse>(
-        HttpMethod.DELETE,
-        {
-          path: `/api/friendship/${id}`,
-        }
-      );
+      const [response] = await fetch<FriendsPanelResponse>(HttpMethod.DELETE, {
+        path: `/api/friendship/${id}`,
+      });
 
       if (response.status === 'Success') {
         getFriendsList();
@@ -175,7 +160,7 @@ export const useFriendsPanel = (): FriendsPanel => {
       return false;
     },
 
-    [fetchWithJwt, getFriendsList, handleShowSnackBar]
+    [fetch, getFriendsList, handleShowSnackBar]
   );
 
   return {

@@ -9,5 +9,7 @@ export type Event = {
     address: string;
   };
   isPrivate: boolean;
-  user_id: number;
+  createdBy: number;
+  createdAt: number;
+  archived: boolean;
 };
