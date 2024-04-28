@@ -2,7 +2,6 @@ import { useState, ReactNode, useMemo, useCallback, useEffect } from 'react';
 import { HttpMethod } from '../enums/HttpMethods';
 import { useApi } from '../hooks/useApi';
 import { EventType, EventsContext } from '../contexts/eventsContext';
-import { LoadingSpinner } from '../components/common/LoadingSpinner/LoadingSpinner';
 import { Event } from '../types/Event';
 import { useUser } from '../contexts/userContext';
 import { ResponseStatus } from '../enums/ResponseStatus';
@@ -33,12 +32,14 @@ export const EventsProvider = ({ children }: EventsProviderProps) => {
         path: `/api/events/${type.toLowerCase()}`,
       });
 
-      if (data) {
-        if (type === 'PARTICIPATION') setParticipatedEvents(data);
-        setEvents(data);
-        return true;
+      if (!data) {
+        return false;
       }
-      return false;
+      if (type === 'PARTICIPATION') {
+        setParticipatedEvents(data);
+      }
+      setEvents(data);
+      return true;
     },
     [fetch]
   );
@@ -48,15 +49,12 @@ export const EventsProvider = ({ children }: EventsProviderProps) => {
       path: `/api/events/participation`,
     });
 
-    if (data) {
-      const events = data.flatMap(({ event }) => event);
-      console.log(events);
-      setParticipatedEvents(data);
-      return true;
-    } else {
-      setEvents([]);
+    if (!data) {
+      setParticipatedEvents([]);
+      return false;
     }
-    return false;
+    setParticipatedEvents(data);
+    return true;
   }, [fetch]);
 
   const removeEvent = useCallback(
@@ -121,7 +119,6 @@ export const EventsProvider = ({ children }: EventsProviderProps) => {
 
   return (
     <EventsContext.Provider value={contextValue}>
-      {isFetching && <LoadingSpinner message="Fetching events" />}
       <>{children}</>
     </EventsContext.Provider>
   );

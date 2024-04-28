@@ -6,7 +6,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Event } from '../events/event.entity';
@@ -16,11 +16,11 @@ export class EventParticipation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.eventParticipations)
   @JoinColumn()
   user: User;
 
-  @OneToOne(() => Event, (event) => event.id)
+  @ManyToOne(() => Event, (event) => event.participations)
   @JoinColumn()
   event: Event;
 

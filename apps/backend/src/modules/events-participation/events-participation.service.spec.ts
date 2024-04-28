@@ -5,7 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Contract } from '../dictionaries/contract/contract.entity';
 import { Company } from '../dictionaries/company/company.entity';
 import { NotFoundException } from '@nestjs/common';
-import { OFFER_EXCEPTION_MESSAGES } from './event-exception.messages';
+import { EVENT_PARTICIPATION_EXCEPTION_MESSAGES } from './event-exception.messages';
 import { ILike } from 'typeorm';
 
 describe('EventsService', () => {
@@ -164,7 +164,7 @@ describe('EventsService', () => {
     await expect(async () => {
       await service.remove(1);
     }).rejects.toThrow(
-      new NotFoundException(OFFER_EXCEPTION_MESSAGES.UNREMOVABLE),
+      new NotFoundException(EVENT_PARTICIPATION_EXCEPTION_MESSAGES.UNREMOVABLE),
     );
 
     offer1.unremovable = false;

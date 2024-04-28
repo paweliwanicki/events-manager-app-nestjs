@@ -118,6 +118,7 @@ const Dashboard = () => {
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {events.map((event: Event) => {
               const { lat, lng, address } = event.location;
+
               return (
                 <Marker
                   key={`event-${event.id}-marker`}

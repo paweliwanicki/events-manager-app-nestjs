@@ -20,8 +20,8 @@ export class EventsService {
   async findOneById(id: number) {
     if (!id) return null;
     return await this.eventRepository.findOne({
-      where: { id: id },
-      // relations: { company: true, contract: true },
+      where: { id },
+      relations: { participations: true },
     });
   }
 
@@ -38,7 +38,7 @@ export class EventsService {
 
     const results = await this.eventRepository.find({
       where,
-      // relations: { company: true, contract: true },
+      relations: { participations: true },
       order: {
         createdAt: 'DESC',
       },

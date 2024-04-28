@@ -7,6 +7,7 @@ import { Event } from '../../../types/Event';
 import Button from '../../common/Button/Button';
 import { EventType, useEvents } from '../../../contexts/eventsContext';
 import { useSnackBar } from '../../../contexts/snackBarContext';
+import { ResponseStatus } from '../../../enums/ResponseStatus';
 
 type RemoveEventProps = {
   data: Event | undefined;
@@ -42,7 +43,7 @@ const RemoveEventModal = ({
   const handleRemoveEvent = useCallback(async () => {
     if (id) {
       const response = await removeEvent(id);
-      if (response?.status !== 'Success') {
+      if (response?.status !== ResponseStatus.SUCCESS) {
         handleShowSnackBar(
           'Error during removing event has occured! Please try again.',
           'error'
@@ -96,9 +97,8 @@ const RemoveEventModal = ({
             Remove
           </Button>
         </div>
+        {isFetching && <LoadingSpinner message="Removing Event" />}
       </Modal>
-
-      {isFetching && <LoadingSpinner message="Removing Event" />}
     </>
   );
 };

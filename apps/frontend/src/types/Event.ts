@@ -1,3 +1,5 @@
+import { User } from './User';
+
 export type Event = {
   id: number;
   name: string;
@@ -12,4 +14,10 @@ export type Event = {
   createdBy: number;
   createdAt: number;
   archived: boolean;
+  participationId?: number;
+};
+
+export type EventParticipation = {
+  user: User;
+  event: Event;
 };

@@ -17,14 +17,11 @@ import { User } from '../users/user.entity';
 import { JwtAuthGuard } from '../authentication/guards/jwt-auth.guard';
 import { FiltersEventDto } from './dtos/filters-event.dto';
 import { NewEventDto } from './dtos/new-event.dto';
-import { EventsParticipationService } from '../events-participation/events-participation.service';
 
 @Controller('events')
 @UseGuards(JwtAuthGuard)
 export class EventsController {
-  constructor(
-    private eventsService: EventsService, //private eventsParticipationService: EventsParticipationService,
-  ) {}
+  constructor(private eventsService: EventsService) {}
 
   @Post()
   async addEvent(@Body() body: NewEventDto, @CurrentUser() user: User) {
@@ -74,21 +71,8 @@ export class EventsController {
   }
 
   @Get('/my')
-  async findMyEvents(
-    @CurrentUser() user: User,
-    @Body() filters: FiltersEventDto,
-  ) {
-    filters.createdBy = user.id;
-    return { data: await this.eventsService.findAll(filters) };
-  }
-
-  @Get('/participated')
-  async findParticipatedEvents(
-    @CurrentUser() user: User,
-    @Body() filters: FiltersEventDto,
-  ) {
-    //filters.createdBy = user.id;
-    return { data: await this.eventsService.findAll(filters) };
+  async findMyEvents(@CurrentUser() user: User) {
+    return { data: await this.eventsService.findByUserId(user.id) };
   }
 
   @Get('/myArchive')

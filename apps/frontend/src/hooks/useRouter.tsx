@@ -1,7 +1,6 @@
 import Layout from '../containers/Layout/Layout';
 import Dashboard from '../containers/Dashboard/Dashboard';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
-import { Page404 } from '../404';
 import { AuthGuard } from '../guards/AuthGuard';
 import { RoutePath } from '../enums/RoutePath';
 import { createBrowserHistory } from 'history';
@@ -14,7 +13,6 @@ const router = createBrowserRouter([
   {
     path: RoutePath.HOME,
     element: <Layout />,
-    errorElement: <Page404 />,
     children: [
       { index: true, element: <Navigate to={RoutePath.DASHBOARD} replace /> },
       {

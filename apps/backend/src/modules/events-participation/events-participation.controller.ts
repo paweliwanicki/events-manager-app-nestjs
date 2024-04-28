@@ -15,7 +15,9 @@ import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { User } from '../users/user.entity';
 import { JwtAuthGuard } from '../authentication/guards/jwt-auth.guard';
 import { EventsService } from '../events/events.service';
+import { ResponseStatus } from 'src/enums/ResponseStatus';
 
+@UseGuards(JwtAuthGuard)
 @Controller('events/participation')
 export class EventsParticipationController {
   constructor(
@@ -23,13 +25,34 @@ export class EventsParticipationController {
     private eventsParticipationService: EventsParticipationService,
   ) {}
 
+  @Get()
+  async findEventsParticipations(@CurrentUser() user: User) {
+    const participatedEvents =
+      await this.eventsParticipationService.findByUserId(user.id);
+
+    return {
+      data: participatedEvents.flatMap(({ event, id }) => ({
+        ...event,
+        participationId: id,
+      })),
+    };
+  }
+
   @Post('/:eventId')
-  @UseGuards(JwtAuthGuard)
   async addEventParticipation(
-    @Param('eventId') eventId: number,
+    @Param('eventId', ParseIntPipe) eventId: number,
     @CurrentUser() user: User,
   ) {
+    console.log(user);
     const event = await this.eventsService.findOneById(eventId);
+    const alreadyParticipated =
+      await this.eventsParticipationService.findOneByWhere({
+        where: { user, event },
+      });
+
+    if (alreadyParticipated) {
+      throw new Error('Already participated!');
+    }
     const newParticipation = {
       user,
       event,
@@ -37,7 +60,11 @@ export class EventsParticipationController {
       createdBy: user.id,
     };
 
-    return await this.eventsParticipationService.create(newParticipation);
+    await this.eventsParticipationService.create(newParticipation);
+    return {
+      message: 'Successfully joined the event!',
+      status: ResponseStatus.SUCCESS,
+    };
   }
 
   @Get(':id')
@@ -49,22 +76,18 @@ export class EventsParticipationController {
     return event;
   }
 
-  @Get()
-  async findEventsParticipation(@CurrentUser() user: User) {
+  @Delete(':id')
+  async removeEventParticipation(@Param('id', ParseIntPipe) id: number) {
+    await this.eventsParticipationService.remove(id);
+
     return {
-      data: await this.eventsParticipationService.findAll({ where: user }),
+      message: 'Successfully left the event!',
+      status: ResponseStatus.SUCCESS,
     };
   }
 
-  @Delete('/:id')
-  @UseGuards(JwtAuthGuard)
-  async removeEvent(@Param('id') id: string) {
-    return await this.eventsParticipationService.remove(parseInt(id));
-  }
-
   @Patch()
-  @UseGuards(JwtAuthGuard)
-  async updateEvent(
+  async updateEventParticipation(
     @Param('eventId', ParseIntPipe) eventId: number,
     @CurrentUser() user: User,
   ) {

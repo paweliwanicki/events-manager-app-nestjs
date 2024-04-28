@@ -30,6 +30,7 @@ const EventsList = ({
   const { user } = useUser();
   const {
     participatedEvents,
+    isFetching,
     joinEvent,
     leaveEvent,
     getEvents,
@@ -132,7 +133,7 @@ const EventsList = ({
     <div className={classes.eventsListContainer}>
       <ul>
         {!data.length ? (
-          <p>No events found!</p>
+          <p>{isFetching ? 'Fetching events...' : 'No events found!'}</p>
         ) : (
           data.map((event: Event) => {
             const alreadyParticipate = participatedEvents.find(
@@ -141,6 +142,7 @@ const EventsList = ({
 
             const showParticipateBtn = user && selectedTab !== 'MY';
             const showSettingsBtn = user && selectedTab === 'MY';
+
             return (
               <li
                 id={`event-li-${event.id}`}
@@ -167,7 +169,8 @@ const EventsList = ({
                     onClick={() =>
                       !alreadyParticipate
                         ? handleJoinEvent(event.id)
-                        : handleLeaveEvent(event.id)
+                        : alreadyParticipate.participationId &&
+                          handleLeaveEvent(alreadyParticipate.participationId)
                     }
                     className={classes.btnJoinEvent}
                   >

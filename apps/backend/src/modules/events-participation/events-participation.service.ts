@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
-import { OFFER_EXCEPTION_MESSAGES } from './event-exception.messages';
+import { FindOneOptions, Repository } from 'typeorm';
+import { EVENT_PARTICIPATION_EXCEPTION_MESSAGES } from './event-exception.messages';
 import { EventParticipation } from './event-participation.entity';
 
 @Injectable()
@@ -16,6 +16,13 @@ export class EventsParticipationService {
     return await this.eventParticipationRepository.save(newEvent);
   }
 
+  async findOneByWhere(where: FindOneOptions<EventParticipation>) {
+    return await this.eventParticipationRepository.findOne({
+      ...where,
+      relations: { user: true, event: true },
+    });
+  }
+
   async findOneById(id: number) {
     if (!id) return null;
     return await this.eventParticipationRepository.findOne({
@@ -25,21 +32,27 @@ export class EventsParticipationService {
   }
 
   async findByUserId(createdBy: number) {
-    return this.eventParticipationRepository.find({ where: { createdBy } });
+    return this.eventParticipationRepository.find({
+      where: { createdBy },
+      relations: { user: true, event: true },
+    });
   }
 
-  async findAll(where: any) {
+  async findAll(where: FindOneOptions<EventParticipation>) {
     const results = await this.eventParticipationRepository.find({
       relations: { user: true, event: true },
       ...where,
     });
+
     return results;
   }
 
   async update(id: number, attrs: Partial<EventParticipation>) {
     const event = await this.findOneById(id);
     if (!event) {
-      throw new NotFoundException(OFFER_EXCEPTION_MESSAGES.NOT_FOUND);
+      throw new NotFoundException(
+        EVENT_PARTICIPATION_EXCEPTION_MESSAGES.NOT_FOUND,
+      );
     }
     Object.assign(event, attrs);
     return this.eventParticipationRepository.save(event);
@@ -48,7 +61,9 @@ export class EventsParticipationService {
   async remove(id: number) {
     const event = await this.findOneById(id);
     if (!event) {
-      throw new NotFoundException(OFFER_EXCEPTION_MESSAGES.NOT_FOUND);
+      throw new NotFoundException(
+        EVENT_PARTICIPATION_EXCEPTION_MESSAGES.NOT_FOUND,
+      );
     }
     return this.eventParticipationRepository.remove(event);
   }

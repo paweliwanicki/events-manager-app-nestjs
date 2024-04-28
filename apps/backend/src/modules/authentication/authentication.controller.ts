@@ -27,7 +27,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { existsSync, mkdirSync } from 'fs';
 
-@Serialize(UserDto) // interceptor
+@Serialize(UserDto)
 @Controller('auth')
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
@@ -39,23 +39,6 @@ export class AuthenticationController {
     return user;
   }
 
-  // async uploadUserAvatar(
-  //   @UploadedFile(
-  //     new ParseFilePipe({
-  //       validators: [
-  //         new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
-  //         new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
-  //       ],
-  //     }),
-  //   )
-  //   file: Express.Multer.File,
-  //   @Body('companyId') companyId: number,
-  // ) {
-  //   await this.companyService.setCompanyLogo(companyId, file);
-  //   return {
-  //     file: file.buffer?.toString(),
-  //   };
-  // }
   @Post('/signup')
   @UseInterceptors(
     FileInterceptor('avatar', {
@@ -74,15 +57,15 @@ export class AuthenticationController {
     }),
   )
   async SignUpUser(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
-        ],
-      }),
-    )
-    file: Express.Multer.File,
+    // @UploadedFile(
+    //   new ParseFilePipe({
+    //     validators: [
+    //       new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+    //       new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
+    //     ],
+    //   }),
+    // )
+    // file: Express.Multer.File,
     @Body() body: SignUpUserDto,
     @Res() response: Response,
   ) {

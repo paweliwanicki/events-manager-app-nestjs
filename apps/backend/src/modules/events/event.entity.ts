@@ -5,7 +5,9 @@ import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
+  OneToMany,
 } from 'typeorm';
+import { EventParticipation } from '../events-participation/event-participation.entity';
 
 export type EventLocation = { address: string; lat: number; lng: number };
 @Entity()
@@ -22,7 +24,7 @@ export class Event {
   @Column()
   description: string;
 
-  @Column({ type: 'json' })
+  @Column({ type: 'jsonb' })
   location: EventLocation;
 
   @Column()
@@ -43,9 +45,8 @@ export class Event {
   @Column({ default: false })
   archived: boolean;
 
-  // @ManyToOne(() => Company, (company) => company.event)
-  // @JoinColumn()
-  // company: Company;
+  @OneToMany(() => EventParticipation, (participation) => participation.event)
+  participations: EventParticipation[];
 
   // @ManyToOne(() => Contract, (contract) => contract.event)
   // @JoinColumn()
