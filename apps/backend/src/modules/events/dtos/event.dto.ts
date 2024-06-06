@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { EventLocation } from '../event.entity';
+import { EventLocation } from '../entities/event.entity';
 
 export class EventDto {
   @Expose()
@@ -12,10 +12,6 @@ export class EventDto {
   description: string;
   @Expose()
   location: EventLocation;
-  // @Expose()
-  // contract: Contract;
-  // @Expose()
-  // company: Company;
   @Expose()
   createdAt: number;
   @Expose()

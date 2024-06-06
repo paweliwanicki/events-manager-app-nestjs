@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { EventLocation } from '../event.entity';
+import { EventLocation } from '../entities/event.entity';
 
 export class UpdateEventDto {
   @IsOptional()

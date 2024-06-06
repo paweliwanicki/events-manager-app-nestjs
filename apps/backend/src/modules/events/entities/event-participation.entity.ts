@@ -8,19 +8,18 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { User } from '../users/user.entity';
-import { Event } from '../events/event.entity';
+import { User } from '../../users/user.entity';
+import { Event } from './event.entity';
 
 @Entity()
 export class EventParticipation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.eventParticipations)
-  @JoinColumn()
+  @ManyToOne(() => User, (user) => user.id)
   user: User;
 
-  @ManyToOne(() => Event, (event) => event.participations)
+  @ManyToOne(() => Event, (event) => event.id)
   @JoinColumn()
   event: Event;
 

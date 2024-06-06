@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EventsService } from './events.service';
-import { Event } from './event.entity';
+import { EventsService } from './services/events.service';
+import { Event } from './entities/event.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Contract } from '../dictionaries/contract/contract.entity';
 import { Company } from '../dictionaries/company/company.entity';
 import { NotFoundException } from '@nestjs/common';
-import { OFFER_EXCEPTION_MESSAGES } from './event-exception.messages';
+import { OFFER_EXCEPTION_MESSAGES } from './events-messages';
 import { ILike } from 'typeorm';
 
 describe('EventsService', () => {

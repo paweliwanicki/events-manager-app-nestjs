@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EventsController } from './events.controller';
-import { EventsService } from './events.service';
+import { EventsController } from './controllers/events.controller';
+import { EventsService } from './services/events.service';
 import { JwtAuthGuard } from '../authentication/guards/jwt-auth.guard';
 import { CanActivate } from '@nestjs/common';
 

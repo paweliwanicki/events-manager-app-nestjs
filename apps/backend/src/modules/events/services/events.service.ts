@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Event } from './event.entity';
+import { Event } from '../entities/event.entity';
 import { ILike, Repository } from 'typeorm';
-import { OFFER_EXCEPTION_MESSAGES } from './event-exception.messages';
-
-import { FiltersEventDto } from './dtos/filters-event.dto';
+import { EVENTS_MESSAGES } from '../events-messages';
+import { FiltersEventDto } from '../dtos/filters-event.dto';
 
 @Injectable()
 export class EventsService {
@@ -21,7 +20,7 @@ export class EventsService {
     if (!id) return null;
     return await this.eventRepository.findOne({
       where: { id },
-      relations: { participations: true },
+      relations: { participatedUsers: true },
     });
   }
 
@@ -30,7 +29,7 @@ export class EventsService {
   }
 
   async findAll(filters: Partial<FiltersEventDto>) {
-    const { activePage, itemsPerPage, ...where } = filters;
+    const { ...where } = filters;
 
     if (where.name) {
       where.name = ILike(`%${where.name}%`);
@@ -38,13 +37,10 @@ export class EventsService {
 
     const results = await this.eventRepository.find({
       where,
-      relations: { participations: true },
+      relations: { participatedUsers: true },
       order: {
         createdAt: 'DESC',
       },
-      take: itemsPerPage ?? 12,
-      skip:
-        itemsPerPage && activePage > 1 ? itemsPerPage * (activePage - 1) : 0,
     });
     return results;
   }
@@ -52,7 +48,7 @@ export class EventsService {
   async update(id: number, attrs: Partial<Event>) {
     const event = await this.findOneById(id);
     if (!event) {
-      throw new NotFoundException(OFFER_EXCEPTION_MESSAGES.NOT_FOUND);
+      throw new NotFoundException(EVENTS_MESSAGES.NOT_FOUND);
     }
     Object.assign(event, attrs);
     return this.eventRepository.save(event);
@@ -61,7 +57,7 @@ export class EventsService {
   async remove(id: number) {
     const event = await this.findOneById(id);
     if (!event) {
-      throw new NotFoundException(OFFER_EXCEPTION_MESSAGES.NOT_FOUND);
+      throw new NotFoundException(EVENTS_MESSAGES.NOT_FOUND);
     }
     return this.eventRepository.remove(event);
   }

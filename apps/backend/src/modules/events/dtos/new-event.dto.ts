@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { EventLocation } from '../event.entity';
+import { EventLocation } from '../entities/event.entity';
 
 export class NewEventDto {
   @IsString()
@@ -24,12 +24,6 @@ export class NewEventDto {
 
   @IsBoolean()
   isPrivate: boolean;
-
-  // @IsNotEmpty()
-  // contract: Contract;
-
-  // @IsNotEmpty()
-  // company: Company;
 
   @IsOptional()
   createdAt: number;

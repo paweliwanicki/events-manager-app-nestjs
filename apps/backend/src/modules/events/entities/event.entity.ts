@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
 } from 'typeorm';
-import { EventParticipation } from '../events-participation/event-participation.entity';
+import { EventParticipation } from './event-participation.entity';
 
 export type EventLocation = { address: string; lat: number; lng: number };
 @Entity()
@@ -46,11 +46,7 @@ export class Event {
   archived: boolean;
 
   @OneToMany(() => EventParticipation, (participation) => participation.event)
-  participations: EventParticipation[];
-
-  // @ManyToOne(() => Contract, (contract) => contract.event)
-  // @JoinColumn()
-  // contract: Contract;
+  participatedUsers: EventParticipation[];
 
   @AfterInsert()
   logInsert() {

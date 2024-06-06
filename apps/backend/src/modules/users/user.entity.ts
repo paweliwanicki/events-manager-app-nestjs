@@ -7,9 +7,8 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   OneToMany,
-  OneToOne,
 } from 'typeorm';
-import { EventParticipation } from '../events-participation/event-participation.entity';
+import { EventParticipation } from '../events/entities/event-participation.entity';
 
 @Entity()
 export class User {
@@ -47,8 +46,8 @@ export class User {
   @Exclude()
   refreshToken: string;
 
-  @OneToMany(() => EventParticipation, (participation) => participation.user)
-  eventParticipations: EventParticipation[];
+  @OneToMany(() => EventParticipation, (participation) => participation.event)
+  eventsParticipation: EventParticipation[];
 
   @AfterInsert()
   logInsert() {

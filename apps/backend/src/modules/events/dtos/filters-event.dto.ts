@@ -1,6 +1,6 @@
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 import { FindOperator } from 'typeorm';
-import { EventLocation } from '../event.entity';
+import { EventLocation } from '../entities/event.entity';
 
 export class FiltersEventDto {
   @IsString()

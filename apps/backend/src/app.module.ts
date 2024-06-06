@@ -10,7 +10,6 @@ import { DatabaseConfig } from './config';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { UsersModule } from './modules/users/users.module';
 import { EventsModule } from './modules/events/events.module';
-import { EventsParticipationModule } from './modules/events-participation/events-participation.module';
 
 @Module({
   imports: [
@@ -36,7 +35,6 @@ import { EventsParticipationModule } from './modules/events-participation/events
     AuthenticationModule,
     UsersModule,
     EventsModule,
-    EventsParticipationModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
-import { EVENT_PARTICIPATION_EXCEPTION_MESSAGES } from './event-exception.messages';
-import { EventParticipation } from './event-participation.entity';
+import { EVENTS_MESSAGES } from '../events-messages';
+import { EventParticipation } from '../entities/event-participation.entity';
 
 @Injectable()
 export class EventsParticipationService {
@@ -51,7 +51,7 @@ export class EventsParticipationService {
     const event = await this.findOneById(id);
     if (!event) {
       throw new NotFoundException(
-        EVENT_PARTICIPATION_EXCEPTION_MESSAGES.NOT_FOUND,
+        EVENTS_MESSAGES.EVENT_PARTICIPATION_NOT_FOUND,
       );
     }
     Object.assign(event, attrs);
@@ -62,7 +62,7 @@ export class EventsParticipationService {
     const event = await this.findOneById(id);
     if (!event) {
       throw new NotFoundException(
-        EVENT_PARTICIPATION_EXCEPTION_MESSAGES.NOT_FOUND,
+        EVENTS_MESSAGES.EVENT_PARTICIPATION_NOT_FOUND,
       );
     }
     return this.eventParticipationRepository.remove(event);

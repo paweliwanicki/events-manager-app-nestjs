@@ -10,13 +10,13 @@ import {
   UseGuards,
   ParseIntPipe,
 } from '@nestjs/common';
-import { EventsService } from './events.service';
-import { UpdateEventDto } from './dtos/update-event.dto';
-import { CurrentUser } from '../users/decorators/current-user.decorator';
-import { User } from '../users/user.entity';
-import { JwtAuthGuard } from '../authentication/guards/jwt-auth.guard';
-import { FiltersEventDto } from './dtos/filters-event.dto';
-import { NewEventDto } from './dtos/new-event.dto';
+import { EventsService } from '../services/events.service';
+import { UpdateEventDto } from '../dtos/update-event.dto';
+import { CurrentUser } from '../../users/decorators/current-user.decorator';
+import { User } from '../../users/user.entity';
+import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard';
+import { FiltersEventDto } from '../dtos/filters-event.dto';
+import { NewEventDto } from '../dtos/new-event.dto';
 
 @Controller('events')
 @UseGuards(JwtAuthGuard)

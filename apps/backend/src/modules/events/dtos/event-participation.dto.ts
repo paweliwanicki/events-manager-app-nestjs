@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { User } from 'src/modules/users/user.entity';
+import { User } from '../../users/user.entity';
 
 export class EventParticipationDto {
   @Expose()
@@ -12,8 +12,6 @@ export class EventParticipationDto {
   createdAt: number;
   @Expose()
   createdBy: number;
-  @Expose()
   modifiedAt: number;
-  @Expose()
   modifiedBy: number;
 }
