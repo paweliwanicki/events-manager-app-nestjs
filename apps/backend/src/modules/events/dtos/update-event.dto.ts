@@ -34,4 +34,10 @@ export class UpdateEventDto {
 
   @IsOptional()
   createdBy: number;
+
+  @IsOptional()
+  modifiedAt: number;
+
+  @IsOptional()
+  modifiedBy: number;
 }

@@ -5,6 +5,7 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthenticationService } from '../authentication.service';
 import { JwtCookieExtractor } from '../extractors/jwt-token-cookie.extractor';
+import { AUTH_TOKEN_MESSAGES } from '../authentication-messages';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -26,7 +27,9 @@ export class JwtRefreshStrategy extends PassportStrategy(
   async validate(request: Request, payload: any) {
     const refreshToken = request.cookies['refreshToken'];
     if (!payload || !refreshToken) {
-      throw new BadRequestException('Invalid refresh token');
+      throw new BadRequestException(
+        AUTH_TOKEN_MESSAGES.REFRESH_TOKEN_NOT_VALID,
+      );
     }
     this.authService.validateToken(refreshToken, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),

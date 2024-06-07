@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   Delete,
   Patch,
@@ -17,6 +16,7 @@ import { User } from '../../users/user.entity';
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard';
 import { FiltersEventDto } from '../dtos/filters-event.dto';
 import { NewEventDto } from '../dtos/new-event.dto';
+import { EVENTS_EXCEPTION_MESSAGES } from '../events-messages';
 
 @Controller('events')
 @UseGuards(JwtAuthGuard)
@@ -39,7 +39,7 @@ export class EventsController {
   async findEvent(@Param('id', ParseIntPipe) id: number) {
     const event = await this.eventsService.findOneById(id);
     if (!event) {
-      throw new NotFoundException();
+      throw new Error(EVENTS_EXCEPTION_MESSAGES.NOT_FOUND);
     }
     return event;
   }

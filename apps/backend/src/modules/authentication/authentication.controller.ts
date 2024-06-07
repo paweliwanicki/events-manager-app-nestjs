@@ -1,13 +1,13 @@
 import {
   Body,
   Controller,
-  FileTypeValidator,
+  //FileTypeValidator,
   Get,
-  MaxFileSizeValidator,
-  ParseFilePipe,
+  //MaxFileSizeValidator,
+  //ParseFilePipe,
   Post,
   Res,
-  UploadedFile,
+  //UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
@@ -19,9 +19,9 @@ import { Serialize } from '../../interceptors/serialize.interceptor';
 import { UserDto } from '../users/dtos/user.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Response } from 'express';
-import { setJwtTokensCookies } from './utils/utils';
+import { setJwtTokensCookies } from './utils/cookies';
 import { UseGuards } from '@nestjs/common/decorators/core/use-guards.decorator';
-import { AUTH_MESSAGES } from './auth-exception.messages';
+import { AUTH_MESSAGES } from './authentication-messages';
 import { ResponseStatus } from 'src/enums/ResponseStatus';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';

@@ -16,8 +16,6 @@ export class EventDto {
   createdAt: number;
   @Expose()
   createdBy: number;
-  @Expose()
   modifiedAt: number;
-  @Expose()
   modifiedBy: number;
 }

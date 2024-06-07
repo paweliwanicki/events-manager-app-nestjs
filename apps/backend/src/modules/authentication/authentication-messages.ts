@@ -13,3 +13,9 @@ export const AUTH_MESSAGES: Record<string, string> = {
   USER_SIGNIN_SUCCESS: 'User signed in!',
   USER_SIGNOUT_SUCCESS: 'Successfuly sign out!',
 } as const;
+
+export const AUTH_TOKEN_MESSAGES: Record<string, string> = {
+  TOKEN_NOT_SET: 'JWT token is not set',
+  REFRESH_TOKEN_NOT_SET: 'Refresh token is not set',
+  REFRESH_TOKEN_NOT_VALID: 'Refresh token is not valid',
+} as const;

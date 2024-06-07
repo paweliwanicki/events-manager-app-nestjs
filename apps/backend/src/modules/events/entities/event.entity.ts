@@ -10,6 +10,7 @@ import {
 import { EventParticipation } from './event-participation.entity';
 
 export type EventLocation = { address: string; lat: number; lng: number };
+
 @Entity()
 export class Event {
   @PrimaryGeneratedColumn()

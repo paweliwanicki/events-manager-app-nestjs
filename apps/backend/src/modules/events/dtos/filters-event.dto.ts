@@ -22,12 +22,10 @@ export class FiltersEventDto {
   @IsBoolean()
   @IsOptional()
   archived = false;
-  @IsNumber()
-  @IsOptional()
-  activePage: number;
-  @IsNumber()
-  @IsOptional()
-  itemsPerPage: number;
+
   @IsOptional()
   createdBy: number;
+
+  @IsOptional()
+  participatedUsers: boolean;
 }

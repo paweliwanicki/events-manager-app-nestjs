@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Event } from '../entities/event.entity';
 import { ILike, Repository } from 'typeorm';
-import { EVENTS_MESSAGES } from '../events-messages';
+import { EVENTS_EXCEPTION_MESSAGES } from '../events-messages';
 import { FiltersEventDto } from '../dtos/filters-event.dto';
 
 @Injectable()
@@ -29,7 +29,7 @@ export class EventsService {
   }
 
   async findAll(filters: Partial<FiltersEventDto>) {
-    const { ...where } = filters;
+    const { participatedUsers, ...where } = filters;
 
     if (where.name) {
       where.name = ILike(`%${where.name}%`);
@@ -37,7 +37,7 @@ export class EventsService {
 
     const results = await this.eventRepository.find({
       where,
-      relations: { participatedUsers: true },
+      relations: { participatedUsers },
       order: {
         createdAt: 'DESC',
       },
@@ -48,7 +48,7 @@ export class EventsService {
   async update(id: number, attrs: Partial<Event>) {
     const event = await this.findOneById(id);
     if (!event) {
-      throw new NotFoundException(EVENTS_MESSAGES.NOT_FOUND);
+      throw new NotFoundException(EVENTS_EXCEPTION_MESSAGES.NOT_FOUND);
     }
     Object.assign(event, attrs);
     return this.eventRepository.save(event);
@@ -57,7 +57,7 @@ export class EventsService {
   async remove(id: number) {
     const event = await this.findOneById(id);
     if (!event) {
-      throw new NotFoundException(EVENTS_MESSAGES.NOT_FOUND);
+      throw new NotFoundException(EVENTS_EXCEPTION_MESSAGES.NOT_FOUND);
     }
     return this.eventRepository.remove(event);
   }

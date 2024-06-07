@@ -14,7 +14,10 @@ import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard';
 import { EventsService } from '../services/events.service';
 import { ResponseStatus } from 'src/enums/ResponseStatus';
 import { EventsParticipationService } from '../services/events-participation.service';
-import { EVENTS_PARTICIPATION_MESSAGES } from '../events-messages';
+import {
+  EVENTS_EXCEPTION_MESSAGES,
+  EVENTS_EXCEPTION_PARTICIPATION_MESSAGES,
+} from '../events-messages';
 
 @UseGuards(JwtAuthGuard)
 @Controller('events/participation')
@@ -35,6 +38,7 @@ export class EventsParticipationController {
     }));
     return {
       data,
+      status: ResponseStatus.SUCCESS,
     };
   }
 
@@ -44,13 +48,18 @@ export class EventsParticipationController {
     @CurrentUser() user: User,
   ) {
     const event = await this.eventsService.findOneById(eventId);
+    if (!event) {
+      throw new Error(EVENTS_EXCEPTION_MESSAGES.NOT_FOUND);
+    }
+
     const alreadyParticipated =
       await this.eventsParticipationService.findOneByWhere({
         where: { user, event },
       });
-
     if (alreadyParticipated) {
-      throw new Error(EVENTS_PARTICIPATION_MESSAGES.ALREADY_PARTICIPATED);
+      throw new Error(
+        EVENTS_EXCEPTION_PARTICIPATION_MESSAGES.ALREADY_PARTICIPATED,
+      );
     }
     const newParticipation = {
       user,
@@ -62,10 +71,12 @@ export class EventsParticipationController {
     const { event: participatedEvent } =
       await this.eventsParticipationService.create(newParticipation);
     if (!participatedEvent) {
-      throw new Error(EVENTS_PARTICIPATION_MESSAGES.ERROR_DURING_JOINING_EVENT);
+      throw new Error(
+        EVENTS_EXCEPTION_PARTICIPATION_MESSAGES.ERROR_DURING_JOINING_EVENT,
+      );
     }
     return {
-      message: EVENTS_PARTICIPATION_MESSAGES.JOIN_EVENT,
+      message: EVENTS_EXCEPTION_PARTICIPATION_MESSAGES.JOIN_EVENT,
       status: ResponseStatus.SUCCESS,
     };
   }
@@ -75,10 +86,12 @@ export class EventsParticipationController {
     const { event: participatedEvent } =
       await this.eventsParticipationService.remove(id);
     if (!participatedEvent) {
-      throw new Error(EVENTS_PARTICIPATION_MESSAGES.ERROR_DURING_LEAVING_EVENT);
+      throw new Error(
+        EVENTS_EXCEPTION_PARTICIPATION_MESSAGES.ERROR_DURING_LEAVING_EVENT,
+      );
     }
     return {
-      message: EVENTS_PARTICIPATION_MESSAGES.LEFT_EVENT,
+      message: EVENTS_EXCEPTION_PARTICIPATION_MESSAGES.LEFT_EVENT,
       status: ResponseStatus.SUCCESS,
     };
   }

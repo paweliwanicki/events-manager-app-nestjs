@@ -1,8 +1,8 @@
-export const EVENTS_MESSAGES: Record<string, string> = {
+export const EVENTS_EXCEPTION_MESSAGES: Record<string, string> = {
   NOT_FOUND: 'Event not found',
 } as const;
 
-export const EVENTS_PARTICIPATION_MESSAGES: Record<string, string> = {
+export const EVENTS_EXCEPTION_PARTICIPATION_MESSAGES: Record<string, string> = {
   NOT_FOUND: 'Event participation not found',
   ALREADY_PARTICIPATED: 'User already participated in this event',
   JOIN_EVENT: 'Successfully joined the event!',
