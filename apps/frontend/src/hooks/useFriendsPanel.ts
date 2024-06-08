@@ -1,21 +1,18 @@
-import { useCallback, useState } from 'react';
-import { ResponseStatus, useApi } from './useApi';
-import { HttpMethod } from '../enums/HttpMethods';
-import { useSnackBar } from '../contexts/snackBarContext';
-import { User } from '../types/User';
+import { useCallback, useState } from "react";
+import { useApi } from "./useApi";
+import { HttpMethod } from "../enums/HttpMethods";
+import { useSnackBar } from "../contexts/snackBarContext";
+import { ResponseStatus } from "../enums/ResponseStatus";
+
+export type FriendshipUser = {
+  id: number;
+  firstName: string;
+  lastName: string;
+};
 
 export type Friendship = {
   friendshipId: number;
-  user: {
-    id: number;
-    email: string;
-    firstName: string;
-    lastName: string;
-  };
-};
-
-export type FriendShipData = Partial<User> & {
-  friendshipId: number;
+  user: FriendshipUser;
 };
 
 type FriendsPanelResponse = {
@@ -23,83 +20,75 @@ type FriendsPanelResponse = {
   status: ResponseStatus;
   data: {
     friends: Friendship[];
-    sentFriendRequests: Friendship[];
-    receivedFriendRequests: Friendship[];
-    otherUsers: Partial<User>[];
+    availableUsersToInvite: FriendshipUser[];
+    requestsSent: Friendship[];
+    requestsReceived: Friendship[];
   };
 };
 
 type FriendsPanel = {
-  friendsList: FriendShipData[];
-  receivedFriendsRequests: FriendShipData[];
-  sentFriendRequests: FriendShipData[];
-  otherUsers: Partial<User>[];
+  friendsList: Friendship[];
+  receivedFriendsRequests: Friendship[];
+  sentFriendRequests: Friendship[];
+  availableUsersToInvite: FriendshipUser[];
   isFetching: boolean;
-  addFriend: (email: string) => Promise<boolean>;
+  addFriend: (friendId: number) => Promise<boolean>;
   removeFriend: (id: number) => Promise<boolean>;
   acceptFriendRequest: (id: number) => Promise<boolean>;
   removeFriendRequest: (id: number) => Promise<boolean>;
   getFriendsList: () => Promise<void>;
 };
 
-const getFriendshipData = (data: Friendship[]) => {
-  return data.map(({ friendshipId, user }: Friendship) => {
-    const { email, firstName, lastName } = user;
-    return {
-      id: friendshipId,
-      friendshipId,
-      email,
-      firstName,
-      lastName,
-    };
-  });
-};
-
 export const useFriendsPanel = (): FriendsPanel => {
   const { fetch, isFetching } = useApi();
   const { handleShowSnackBar } = useSnackBar();
-  const [friendsList, setFriendsList] = useState<FriendShipData[]>([]);
-  const [sentFriendRequests, setSendedFriendsRequests] = useState<
-    FriendShipData[]
-  >([]);
+  const [friendsList, setFriendsList] = useState<Friendship[]>([]);
+  const [sentFriendRequests, setSendedFriendsRequests] = useState<Friendship[]>(
+    []
+  );
   const [receivedFriendsRequests, setReceivedFriendsRequests] = useState<
-    FriendShipData[]
+    Friendship[]
   >([]);
-  const [otherUsers, setOtherUsers] = useState<Partial<User>[]>([]);
+  const [availableUsersToInvite, setAvailableUsersToInvite] = useState<
+    FriendshipUser[]
+  >([]);
 
   const getFriendsList = useCallback(async () => {
     const [response] = await fetch<FriendsPanelResponse>(HttpMethod.GET, {
-      path: '/api/users/userPanel',
+      path: "/api/user/friendship",
     });
 
-    if (response.status === 'Success' && response.data) {
+    if (response.status === ResponseStatus.SUCCESS && response.data) {
       const {
-        receivedFriendRequests,
-        sentFriendRequests,
-        otherUsers,
+        requestsReceived,
+        requestsSent,
+        availableUsersToInvite,
         friends,
       } = response.data;
-      setFriendsList(getFriendshipData(friends));
-      setReceivedFriendsRequests(getFriendshipData(receivedFriendRequests));
-      setSendedFriendsRequests(getFriendshipData(sentFriendRequests));
-      setOtherUsers(otherUsers);
+      setFriendsList(friends);
+      setReceivedFriendsRequests(requestsReceived);
+      setSendedFriendsRequests(requestsSent);
+      setAvailableUsersToInvite(availableUsersToInvite);
     }
   }, [fetch]);
 
   const addFriend = useCallback(
-    async (friendId: string) => {
+    async (friendId: number) => {
       const [response] = await fetch<FriendsPanelResponse>(HttpMethod.POST, {
-        path: `/api/friendship?friendId=${friendId}`,
+        path: `/api/user/friendship?friendId=${friendId}`,
       });
 
-      if (response.status === 'Success') {
+      if (response.status === ResponseStatus.SUCCESS) {
         getFriendsList();
-        handleShowSnackBar('The invitation was sent successfully!', 'success');
+        handleShowSnackBar(
+          "The invitation was sent successfully!",
+          ResponseStatus.SUCCESS
+        );
         return true;
       }
       handleShowSnackBar(
-        'There was an error when sending the invitation!',
-        'error'
+        "There was an error when sending the invitation!",
+        ResponseStatus.ERROR
       );
       return false;
     },
@@ -109,15 +98,21 @@ export const useFriendsPanel = (): FriendsPanel => {
   const removeFriend = useCallback(
     async (id: number) => {
       const [response] = await fetch<FriendsPanelResponse>(HttpMethod.DELETE, {
-        path: `/api/friendship/${id}`,
+        path: `/api/user/friendship/${id}`,
       });
 
-      if (response.status === 'Success') {
+      if (response.status === ResponseStatus.SUCCESS) {
         getFriendsList();
-        handleShowSnackBar('Friend was removed successfuly!', 'success');
+        handleShowSnackBar(
+          "Friend was removed successfuly!",
+          ResponseStatus.SUCCESS
+        );
         return true;
       }
-      handleShowSnackBar('Error occured during removing a friend!', 'error');
+      handleShowSnackBar(
+        "Error occured during removing a friend!",
+        ResponseStatus.ERROR
+      );
       return false;
     },
 
@@ -127,15 +122,21 @@ export const useFriendsPanel = (): FriendsPanel => {
   const acceptFriendRequest = useCallback(
     async (id: number) => {
       const [response] = await fetch<FriendsPanelResponse>(HttpMethod.POST, {
-        path: `/api/friendship/invitation?friendshipId=${id}&isAccepted=true`,
+        path: `/api/user/friendship/invitation?friendshipId=${id}&isAccepted=true`,
       });
 
-      if (response.status === 'Success') {
+      if (response.status === ResponseStatus.SUCCESS) {
         getFriendsList();
-        handleShowSnackBar('Friend was removed successfuly!', 'success');
+        handleShowSnackBar(
+          "Friend was added successfuly!",
+          ResponseStatus.SUCCESS
+        );
         return true;
       }
-      handleShowSnackBar('Error occured during removing a friend!', 'error');
+      handleShowSnackBar(
+        "Error occured during adding a friend!",
+        ResponseStatus.ERROR
+      );
       return false;
     },
 
@@ -145,17 +146,20 @@ export const useFriendsPanel = (): FriendsPanel => {
   const removeFriendRequest = useCallback(
     async (id: number) => {
       const [response] = await fetch<FriendsPanelResponse>(HttpMethod.DELETE, {
-        path: `/api/friendship/${id}`,
+        path: `/api/user/friendship/${id}`,
       });
 
-      if (response.status === 'Success') {
+      if (response.status === ResponseStatus.SUCCESS) {
         getFriendsList();
-        handleShowSnackBar('The invitation has been declined', 'success');
+        handleShowSnackBar(
+          "The invitation has been declined",
+          ResponseStatus.SUCCESS
+        );
         return true;
       }
       handleShowSnackBar(
-        'There was an error while declining the invitation!',
-        'error'
+        "There was an error while declining the invitation!",
+        ResponseStatus.ERROR
       );
       return false;
     },
@@ -167,7 +171,7 @@ export const useFriendsPanel = (): FriendsPanel => {
     friendsList,
     sentFriendRequests,
     receivedFriendsRequests,
-    otherUsers,
+    availableUsersToInvite,
     isFetching,
     addFriend,
     removeFriend,

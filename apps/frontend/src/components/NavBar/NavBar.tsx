@@ -1,13 +1,13 @@
-import classes from './NavBar.module.scss';
-import SvgIcon from '../common/SvgIcon/SvgIcon';
-import { Link, useNavigate } from 'react-router-dom';
+import classes from "./NavBar.module.scss";
+import SvgIcon from "../common/SvgIcon/SvgIcon";
+import { Link, useNavigate } from "react-router-dom";
 import ContextMenu, {
   ContextMenuOption,
-} from '../common/ContextMenu/ContextMenu';
-import { useSignForm } from '../../hooks/useSignForm';
-import { useUser } from '../../contexts/userContext';
+} from "../common/ContextMenu/ContextMenu";
+import { useSignForm } from "../../hooks/useSignForm";
+import { useUser } from "../../contexts/userContext";
 import logo from '../../assets/logo.png';
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 const NavBar = () => {
   const { handleSignOut } = useSignForm();
@@ -16,11 +16,11 @@ const NavBar = () => {
   const USER_MENU_OPTIONS: ContextMenuOption[] = useMemo(
     () => [
       {
-        label: 'Friends',
-        action: () => navigate('/friends'),
+        label: "Friends",
+        action: () => navigate("/friends"),
       },
       {
-        label: 'Sign out',
+        label: "Sign out",
         action: () => handleSignOut(),
       },
     ],
@@ -46,12 +46,14 @@ const NavBar = () => {
               height={48}
             />
           ) : (
-            <Link to="login" title="Log in">
+            <Link to="login" title="Sign in">
               <SvgIcon
-                id="icon-login"
+                id="sign-in"
                 height={48}
                 width={48}
-                elementId="icon-login"
+                viewBox="0 0 24 24"
+                color="#fff"
+                elementId="icon-sign-in"
               />
             </Link>
           )}

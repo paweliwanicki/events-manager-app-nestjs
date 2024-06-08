@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
+import { UsersController } from './controllers/users.controller';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user.dto';
 
@@ -65,7 +65,7 @@ describe('UsersController', () => {
 
   it('should get a user by email', () => {
     const email = 'Test1';
-    expect(controller.findUserByEmal(email)).toEqual({
+    expect(controller.findUserByEmail(email)).toEqual({
       id: expect.any(Number),
       email,
     });

@@ -1,6 +1,6 @@
 
 ### get friends
-GET http://localhost:8080/friendship/api
+GET http://localhost:5173/api/users/friendship/
 
 ### get friends
 GET http://localhost:8080/api/users/userpanel

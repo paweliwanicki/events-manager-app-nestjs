@@ -1,45 +1,35 @@
-import Table from '../../components/common/Table/Table';
-import { User } from '../../types/User';
-import classes from './FriendsPanel.module.scss';
-import { useMemo, useCallback, useState, useEffect } from 'react';
-import Select from 'react-select';
-import Button from '../../components/common/Button/Button';
-import { Friendship, useFriendsPanel } from '../../hooks/useFriendsPanel';
-import SvgIcon from '../../components/common/SvgIcon/SvgIcon';
-import { useUser } from '../../contexts/userContext';
-import searchFriendIcon from '../../assets/icons/friend-search.svg';
-import requestIcon from '../../assets/icons/request.svg';
-import requestSentIcon from '../../assets/icons/request-sent.svg';
-import friendsIcon from '../../assets/icons/friends.svg';
-
-type SelectOptionsData = Partial<User>[];
+import Table from "../../components/common/Table/Table";
+import classes from "./FriendsPanel.module.scss";
+import { useMemo, useCallback, useState, useEffect } from "react";
+import Select from "react-select";
+import Button from "../../components/common/Button/Button";
+import {
+  FriendshipUser,
+  Friendship,
+  useFriendsPanel,
+} from "../../hooks/useFriendsPanel";
+import SvgIcon from "../../components/common/SvgIcon/SvgIcon";
+import { useUser } from "../../contexts/userContext";
+import searchFriendIcon from "../../assets/icons/friend-search.svg";
+import requestIcon from "../../assets/icons/request.svg";
+import requestSentIcon from "../../assets/icons/request-sent.svg";
+import friendsIcon from "../../assets/icons/friends.svg";
 
 type SelectOption = {
   value: number;
   label: string;
 };
 
-const generateSelectOptions = (
-  data: SelectOptionsData,
-  valueKey = 'id',
-  labelKeys = ['firstName', 'lastName', 'email']
-) => {
-  return data.map((obj: any) => {
-    const label = labelKeys.reduce((prev, key) => {
-      let val = obj[key];
-      if (key === 'email') {
-        val = `(${obj[key]})`;
-      }
-      return `${prev} ${val}`;
-    }, '');
-    return {
-      value: obj[valueKey],
-      label,
-    };
-  });
+const generateAvailableUsersToInviteSelectOptions = (
+  data: FriendshipUser[]
+): SelectOption[] => {
+  return data.map(({ id, firstName, lastName }) => ({
+    value: id,
+    label: `${lastName} ${firstName}`,
+  }));
 };
 
-const friendsTableFields = ['firstName', 'lastName', 'email'];
+const friendsTableFields = ["firstName", "lastName"];
 
 const FriendsPanel = () => {
   const { user } = useUser();
@@ -47,7 +37,7 @@ const FriendsPanel = () => {
     friendsList,
     sentFriendRequests,
     receivedFriendsRequests,
-    otherUsers,
+    availableUsersToInvite,
     addFriend,
     removeFriend,
     getFriendsList,
@@ -55,7 +45,8 @@ const FriendsPanel = () => {
     removeFriendRequest,
   } = useFriendsPanel();
 
-  const [selectedNewFriend, setSelectedNewFriend] = useState<any>();
+  const [selectedNewFriend, setSelectedNewFriend] =
+    useState<SelectOption | null>();
 
   const handleSelectNewFriend = useCallback((value: SelectOption | null) => {
     setSelectedNewFriend(value);
@@ -137,7 +128,9 @@ const FriendsPanel = () => {
           value={selectedNewFriend}
           isSearchable={true}
           name="users"
-          options={generateSelectOptions(otherUsers)}
+          options={generateAvailableUsersToInviteSelectOptions(
+            availableUsersToInvite
+          )}
           placeholder="Find user..."
         />
 

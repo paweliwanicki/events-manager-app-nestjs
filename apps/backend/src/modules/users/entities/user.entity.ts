@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
 } from 'typeorm';
-import { EventParticipation } from '../events/entities/event-participation.entity';
+import { EventParticipation } from '../../events/entities/event-participation.entity';
 
 @Entity()
 export class User {

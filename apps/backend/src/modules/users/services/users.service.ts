@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './user.entity';
+import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
-import { AUTH_EXCEPTION_MESSAGES } from '../authentication/authentication-messages';
+import { AUTH_EXCEPTION_MESSAGES } from '../../authentication/authentication-messages';
 
 @Injectable()
 export class UsersService {
@@ -34,6 +34,10 @@ export class UsersService {
 
   findOne(where: any) {
     return this.userRepository.findOne({ where: { ...where } });
+  }
+
+  async findAll(where: any) {
+    return await this.userRepository.find({ where: { ...where } });
   }
 
   async update(id: number, attrs: Partial<User>) {

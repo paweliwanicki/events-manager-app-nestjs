@@ -9,7 +9,7 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { CurrentUser } from '../../users/decorators/current-user.decorator';
-import { User } from '../../users/user.entity';
+import { User } from '../../users/entities/user.entity';
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard';
 import { EventsService } from '../services/events.service';
 import { ResponseStatus } from 'src/enums/ResponseStatus';

@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/services/users.service';
 import { JwtService, JwtVerifyOptions } from '@nestjs/jwt';
 import { AUTH_EXCEPTION_MESSAGES } from './authentication-messages';
-import { User } from '../users/user.entity';
+import { User } from '../users/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { hash, genSalt, compare } from 'bcrypt';
 import { ResponseStatus } from '../../enums/ResponseStatus';
