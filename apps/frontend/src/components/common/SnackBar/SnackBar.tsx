@@ -35,6 +35,7 @@ const SnackBar = () => {
     } else {
       closeAnimation();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isShowing]);
 
   return (
@@ -43,8 +44,6 @@ const SnackBar = () => {
       <SvgIcon
         id="icon-close"
         onClick={handleCloseSnackBar}
-        width={24}
-        height={24}
         classNames={classes.closeIcon}
       />
     </div>

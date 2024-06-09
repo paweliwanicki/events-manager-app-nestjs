@@ -165,7 +165,7 @@ const SignUpForm = ({ onSubmit }: SignUpFormProps) => {
         firstName,
         lastName,
         email,
-        dateOfBirth,
+        dateOfBirth as Date,
         password,
         confirmPassword
       );

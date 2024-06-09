@@ -42,12 +42,20 @@ export class FriendshipService {
       relations: { friend: true },
     });
 
-    return friends.map(({ id, friend }) => ({
-      friendshipId: id,
-      ...plainToInstance(FriendshipUserDto, friend, {
-        excludeExtraneousValues: true,
-      }),
-    }));
+    return friends.map(({ id, friend }) => {
+      const { id: userId, ...restFriendDto } = plainToInstance(
+        FriendshipUserDto,
+        friend,
+        {
+          excludeExtraneousValues: true,
+        },
+      );
+      return {
+        id,
+        userId,
+        ...restFriendDto,
+      };
+    });
   }
 
   async findAllAvailableUsersToInvite(currentUser: User) {
@@ -75,12 +83,21 @@ export class FriendshipService {
       where: { user, isAccepted: false },
       relations: { friend: true },
     });
-    return requests.map(({ id, friend }) => ({
-      friendshipId: id,
-      ...plainToInstance(FriendshipUserDto, friend, {
-        excludeExtraneousValues: true,
-      }),
-    }));
+
+    return requests.map(({ id, friend }) => {
+      const { id: userId, ...restFriendDto } = plainToInstance(
+        FriendshipUserDto,
+        friend,
+        {
+          excludeExtraneousValues: true,
+        },
+      );
+      return {
+        id,
+        userId,
+        ...restFriendDto,
+      };
+    });
   }
 
   async findRequestsReceivedByUser(user: User) {
@@ -89,12 +106,20 @@ export class FriendshipService {
       relations: { user: true },
     });
 
-    return requests.map(({ id, user }) => ({
-      friendshipId: id,
-      ...plainToInstance(FriendshipUserDto, user, {
-        excludeExtraneousValues: true,
-      }),
-    }));
+    return requests.map(({ id, user }) => {
+      const { id: userId, ...restFriendDto } = plainToInstance(
+        FriendshipUserDto,
+        user,
+        {
+          excludeExtraneousValues: true,
+        },
+      );
+      return {
+        id,
+        userId,
+        ...restFriendDto,
+      };
+    });
   }
 
   async update(id: number, attrs: Partial<Friendship>) {

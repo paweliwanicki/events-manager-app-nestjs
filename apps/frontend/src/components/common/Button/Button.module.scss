@@ -22,10 +22,10 @@ button.button {
   }
 
   &.primary {
-    background-color: variables.$dark-blue1;
+    background-color: variables.$dark-blue;
 
     &:hover {
-      background-color: variables.$very-dark-blue1;
+      background-color: variables.$very-dark-blue;
     }
   }
 

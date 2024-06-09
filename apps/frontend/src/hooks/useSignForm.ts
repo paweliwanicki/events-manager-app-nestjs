@@ -1,28 +1,28 @@
-import { useCallback, useState, useMemo } from 'react';
-import { setJwtToken, useApi } from './useApi';
-import { useNavigate } from 'react-router-dom';
-import { RoutePath } from '../enums/RoutePath';
-import { HttpMethod } from '../enums/HttpMethods';
-import { User } from '../types/User';
-import { jwtDecode } from 'jwt-decode';
-import { useUser } from '../contexts/userContext';
-import { useSnackBar } from '../contexts/snackBarContext';
-import { ResponseStatus } from '../enums/ResponseStatus';
+import { useCallback, useState, useMemo } from "react";
+import { setJwtToken, useApi } from "./useApi";
+import { useNavigate } from "react-router-dom";
+import { RoutePath } from "../enums/RoutePath";
+import { HttpMethod } from "../enums/HttpMethods";
+import { User } from "../types/User";
+import { jwtDecode } from "jwt-decode";
+import { useUser } from "../contexts/userContext";
+import { useSnackBar } from "../contexts/snackBarContext";
+import { ResponseStatus } from "../enums/ResponseStatus";
 
 type InputError =
-  | 'EMPTY'
-  | 'WRONG_PASSWORD_FORMAT'
-  | 'PASSWORDS_NOT_MATCH'
-  | 'WRONG_EMAIL_FORMAT';
+  | "EMPTY"
+  | "WRONG_PASSWORD_FORMAT"
+  | "PASSWORDS_NOT_MATCH"
+  | "WRONG_EMAIL_FORMAT";
 
 type SignFormInput =
-  | 'EMAIL'
-  | 'FIRSTNAME'
-  | 'LASTNAME'
-  | 'DATE_OF_BIRTH'
-  | 'PASSWORD'
-  | 'CONFIRM_PASSWORD'
-  | 'TERMS';
+  | "EMAIL"
+  | "FIRSTNAME"
+  | "LASTNAME"
+  | "DATE_OF_BIRTH"
+  | "PASSWORD"
+  | "CONFIRM_PASSWORD"
+  | "TERMS";
 
 type SignResponse = {
   message: string;
@@ -56,7 +56,7 @@ type SignForm = {
     firstName: string,
     lastName: string,
     email: string,
-    dateOfBirth: Date,
+    dateOfBirth: Date | undefined,
     password: string,
     confirmPassword: string,
     termsChecked: boolean
@@ -74,19 +74,21 @@ type SignForm = {
 };
 
 const INPUT_ERRORS_MESSAGES: Record<InputError, string> = {
-  EMPTY: 'Can not be empty!',
-  WRONG_PASSWORD_FORMAT: 'Password does not meet requirements!',
-  WRONG_EMAIL_FORMAT: 'E-mail address must be an valid email format!',
-  PASSWORDS_NOT_MATCH: 'Password and confirm password do not match!',
+  EMPTY: "Can not be empty!",
+  WRONG_PASSWORD_FORMAT: "Password does not meet requirements!",
+  WRONG_EMAIL_FORMAT: "E-mail address must be an valid email format!",
+  PASSWORDS_NOT_MATCH: "Password and confirm password do not match!",
 } as const;
 
 const EMAIL_REGEX = new RegExp(
-  '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,10}$',
-  'i'
+  "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,10}$",
+  "i"
 );
 const PASSWORD_REGEX = new RegExp(
-  '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[#?!@$%^&*-]).{8,}$'
+  "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[#?!@$%^&*-]).{8,}$"
 );
+
+const AUTH_API_PATH = "/api/auth";
 
 export const useSignForm = (): SignForm => {
   const navigate = useNavigate();
@@ -123,14 +125,15 @@ export const useSignForm = (): SignForm => {
   const handleSignResponse = useCallback(
     (response: SignResponse) => {
       const { status, message, jwtToken } = response;
-      handleShowSnackBar(message, status === 'success' ? 'success' : 'error');
-      if (status === 'success' && jwtToken) {
-        const user: User = jwtDecode(jwtToken);
-        if (user) {
-          setJwtToken(jwtToken);
-          changeUser(user);
-          navigate(RoutePath.DASHBOARD);
-        }
+      handleShowSnackBar(message, status);
+      if (status !== ResponseStatus.SUCCESS && jwtToken) {
+        return;
+      }
+      const user: User = jwtDecode(jwtToken);
+      if (user) {
+        setJwtToken(jwtToken);
+        changeUser(user);
+        navigate(RoutePath.DASHBOARD);
       }
     },
     [changeUser, navigate, handleShowSnackBar]
@@ -138,8 +141,8 @@ export const useSignForm = (): SignForm => {
   const handleSignUpResponse = useCallback(
     (response: SignResponse) => {
       const { status, message } = response;
-      handleShowSnackBar(message, status === 'success' ? 'success' : 'error');
-      return status === 'success';
+      handleShowSnackBar(message, status);
+      return status === ResponseStatus.SUCCESS;
     },
     [handleShowSnackBar]
   );
@@ -147,7 +150,7 @@ export const useSignForm = (): SignForm => {
   const handleSignIn = useCallback(
     async (email: string, password: string) => {
       const [response] = await fetch<SignResponse>(HttpMethod.POST, {
-        path: '/api/auth/signin',
+        path: `${AUTH_API_PATH}/signin`,
         payload: JSON.stringify({
           email,
           password,
@@ -171,7 +174,7 @@ export const useSignForm = (): SignForm => {
         ? Math.floor(dateOfBirth.getTime() / 1000)
         : 0;
       const [response] = await fetch<SignResponse>(HttpMethod.POST, {
-        path: '/api/auth/signup',
+        path: `${AUTH_API_PATH}/signup`,
         payload: JSON.stringify({
           firstName,
           lastName,
@@ -194,12 +197,12 @@ export const useSignForm = (): SignForm => {
   const validateSignInForm = useCallback((email: string, password: string) => {
     let isValid = true;
 
-    if (email === '') {
+    if (email === "") {
       setEmailError(INPUT_ERRORS_MESSAGES.EMPTY);
       isValid = false;
     }
 
-    if (password === '') {
+    if (password === "") {
       setPasswordError(INPUT_ERRORS_MESSAGES.EMPTY);
       isValid = false;
     }
@@ -215,14 +218,14 @@ export const useSignForm = (): SignForm => {
       firstName: string,
       lastName: string,
       email: string,
-      dateOfBirth: Date,
+      dateOfBirth: Date | undefined,
       password: string,
       confirmPassword: string,
       termsChecked: boolean
     ) => {
       let isValid = true;
 
-      if (email === '') {
+      if (email === "") {
         setEmailError(INPUT_ERRORS_MESSAGES.EMPTY);
         isValid = false;
       } else if (!EMAIL_REGEX.test(email)) {
@@ -230,12 +233,12 @@ export const useSignForm = (): SignForm => {
         isValid = false;
       }
 
-      if (firstName === '') {
+      if (firstName === "") {
         setFirstNameError(INPUT_ERRORS_MESSAGES.EMPTY);
         isValid = false;
       }
 
-      if (lastName === '') {
+      if (lastName === "") {
         setLastNameError(INPUT_ERRORS_MESSAGES.EMPTY);
         isValid = false;
       }
@@ -245,7 +248,7 @@ export const useSignForm = (): SignForm => {
         isValid = false;
       }
 
-      if (password === '') {
+      if (password === "") {
         setPasswordError(INPUT_ERRORS_MESSAGES.EMPTY);
         isValid = false;
       } else if (!PASSWORD_REGEX.test(password)) {
@@ -253,7 +256,7 @@ export const useSignForm = (): SignForm => {
         isValid = false;
       }
 
-      if (confirmPassword === '') {
+      if (confirmPassword === "") {
         setConfirmPasswordError(INPUT_ERRORS_MESSAGES.EMPTY);
         isValid = false;
       } else if (confirmPassword !== password) {
@@ -293,7 +296,7 @@ export const useSignForm = (): SignForm => {
     setTermsCheckIsValidated(false);
   }, []);
 
-  const validationCleaners: Record<SignFormInput | 'ALL', () => void> =
+  const validationCleaners: Record<SignFormInput | "ALL", () => void> =
     useMemo(() => {
       return {
         EMAIL: () => {
@@ -333,7 +336,7 @@ export const useSignForm = (): SignForm => {
 
   const clearValidationAndError = useCallback(
     (input?: SignFormInput) => {
-      validationCleaners[input ?? 'ALL']();
+      validationCleaners[input ?? "ALL"]();
     },
     [validationCleaners]
   );

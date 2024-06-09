@@ -1,14 +1,13 @@
-import { createContext, useContext } from 'react';
-import type { Event } from '../types/Event';
-import { GenericEventsResponse } from '../providers/EventsProvider';
-
-export type EventType = 'PUBLIC' | 'PRIVATE' | 'MY' | 'PARTICIPATION';
+import { createContext, useContext } from "react";
+import type { Event } from "../types/Event";
+import { GenericEventsResponse } from "../providers/EventsProvider";
+import { EventNavigationTab } from "../enums/EventNavigationTab";
 
 type EventsContextType = {
   isFetching: boolean;
   events: Event[];
   participatedEvents: Event[];
-  getEvents: (type: EventType) => Promise<boolean> | undefined;
+  getEvents: (type: EventNavigationTab) => Promise<boolean> | undefined;
   getParticipatedEvents: () => Promise<boolean> | undefined;
   removeEvent: (id: number) => Promise<GenericEventsResponse> | undefined;
   joinEvent: (id: number) => Promise<GenericEventsResponse> | undefined;

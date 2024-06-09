@@ -11,7 +11,7 @@ export type FriendshipUser = {
 };
 
 export type Friendship = {
-  friendshipId: number;
+  id: number;
   user: FriendshipUser;
 };
 
@@ -39,6 +39,8 @@ type FriendsPanel = {
   getFriendsList: () => Promise<void>;
 };
 
+const FRIENDSHIP_API_PATH = "/api/user/friendship";
+
 export const useFriendsPanel = (): FriendsPanel => {
   const { fetch, isFetching } = useApi();
   const { handleShowSnackBar } = useSnackBar();
@@ -55,7 +57,7 @@ export const useFriendsPanel = (): FriendsPanel => {
 
   const getFriendsList = useCallback(async () => {
     const [response] = await fetch<FriendsPanelResponse>(HttpMethod.GET, {
-      path: "/api/user/friendship",
+      path: FRIENDSHIP_API_PATH,
     });
 
     if (response.status === ResponseStatus.SUCCESS && response.data) {
@@ -75,7 +77,7 @@ export const useFriendsPanel = (): FriendsPanel => {
   const addFriend = useCallback(
     async (friendId: number) => {
       const [response] = await fetch<FriendsPanelResponse>(HttpMethod.POST, {
-        path: `/api/user/friendship?friendId=${friendId}`,
+        path: `${FRIENDSHIP_API_PATH}?friendId=${friendId}`,
       });
 
       if (response.status === ResponseStatus.SUCCESS) {
@@ -98,7 +100,7 @@ export const useFriendsPanel = (): FriendsPanel => {
   const removeFriend = useCallback(
     async (id: number) => {
       const [response] = await fetch<FriendsPanelResponse>(HttpMethod.DELETE, {
-        path: `/api/user/friendship/${id}`,
+        path: `${FRIENDSHIP_API_PATH}/${id}`,
       });
 
       if (response.status === ResponseStatus.SUCCESS) {
@@ -122,7 +124,7 @@ export const useFriendsPanel = (): FriendsPanel => {
   const acceptFriendRequest = useCallback(
     async (id: number) => {
       const [response] = await fetch<FriendsPanelResponse>(HttpMethod.POST, {
-        path: `/api/user/friendship/invitation?friendshipId=${id}&isAccepted=true`,
+        path: `${FRIENDSHIP_API_PATH}/invitation?friendshipId=${id}&isAccepted=true`,
       });
 
       if (response.status === ResponseStatus.SUCCESS) {
@@ -146,7 +148,7 @@ export const useFriendsPanel = (): FriendsPanel => {
   const removeFriendRequest = useCallback(
     async (id: number) => {
       const [response] = await fetch<FriendsPanelResponse>(HttpMethod.DELETE, {
-        path: `/api/user/friendship/${id}`,
+        path: `${FRIENDSHIP_API_PATH}/${id}`,
       });
 
       if (response.status === ResponseStatus.SUCCESS) {

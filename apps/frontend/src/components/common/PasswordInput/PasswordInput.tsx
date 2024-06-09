@@ -1,7 +1,6 @@
 import Input, { InputProps } from '../Input/Input';
 import { useCallback, useState } from 'react';
 import SvgIcon from '../SvgIcon/SvgIcon';
-//import { Tooltip } from 'react-tooltip';
 import classes from './PasswordInput.module.scss';
 
 type InputType = 'text' | 'password';

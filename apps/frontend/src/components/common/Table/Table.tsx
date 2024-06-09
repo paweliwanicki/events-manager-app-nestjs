@@ -1,53 +1,50 @@
-import SvgIcon from '../SvgIcon/SvgIcon';
-import classes from './Table.module.scss';
+import { ReactNode } from "react";
+import SvgIcon from "../SvgIcon/SvgIcon";
+import classes from "./Table.module.scss";
 
-type TableProps = {
-  data: Record<string, any>[];
+type TableProps<T> = {
+  data: T[];
   fields: string[];
   id?: string;
   classNames?: string;
-  actions?: Record<any, (el: any) => void>; // @TODO fix any
+  actions?: Record<string, (el: T) => void>;
 };
 
-const Table = ({
+const Table = <T extends { id: number }>({
   data,
   fields,
   actions,
-  id = '',
-  classNames = '',
-}: TableProps) => {
+  id = "",
+  classNames = "",
+}: TableProps<T>) => {
   return data?.length ? (
     <table id={id} className={`${classes.commonTable} ${classNames}`}>
       <thead>
         <tr>
           <th>No.</th>
           {fields.map((field) => (
-            <th key={`th-key-${field}`}>{field}</th>
+            <th key={`th-key-${String(field)}`}>{String(field)}</th>
           ))}
-          <th>...</th>
+          {actions && <th>...</th>}
         </tr>
       </thead>
       <tbody>
-        {data &&
-          data.map((el: any, index: number) => (
+        {data.map((el, index) => {
+          return (
             <tr key={`tr-key-${el.id}`}>
               <td width="50" key={`td-key-${index}`}>
                 {index + 1}.
               </td>
-
               {fields.map((field) => (
-                <td key={`td-key-${field}-${el.id}`}>{el[field]}</td>
+                <td key={`td-key-${String(field)}-${el.id}`}>
+                  {el[field as keyof T] as ReactNode}
+                </td>
               ))}
-
               {actions && (
                 <td
                   key={`td-key-actions-${el.id}`}
                   className={classes.actionsColumn}
-                  width={
-                    actions
-                      ? (Object.keys(actions).length * 35).toString()
-                      : '35'
-                  }
+                  width={Object.keys(actions).length * 35}
                 >
                   {Object.entries(actions).map(([key, callback]) => (
                     <SvgIcon
@@ -64,7 +61,8 @@ const Table = ({
                 </td>
               )}
             </tr>
-          ))}
+          );
+        })}
       </tbody>
     </table>
   ) : (

@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { HttpMethod } from '../enums/HttpMethods';
+import { useCallback, useState } from "react";
+import { HttpMethod } from "../enums/HttpMethods";
 
 type RequestOptions = {
   path: string;
@@ -20,16 +20,16 @@ type ApiService = {
   ) => Promise<[body: T, resParams: ResponseParams]>;
 };
 
-const request = async (
+const request = async <T>(
   method: HttpMethod,
   params: RequestOptions,
   customHeaders: Record<string, string> | undefined = undefined
-): Promise<[body: any, resParams: ResponseParams]> => {
+): Promise<[body: T, resParams: ResponseParams]> => {
   let body = null;
   const { path, payload, contentType } = params;
 
   const headers = {
-    'Content-Type': contentType ? contentType : 'application/json',
+    "Content-Type": contentType ? contentType : "application/json",
     ...customHeaders,
   };
 
@@ -40,32 +40,32 @@ const request = async (
   });
 
   try {
-    body = (await response.json()) as ResponseParams;
+    body = await response.json();
   } catch {
-    console.error('Error while parsing the response :(');
+    console.error("Error while parsing the response :(");
   }
 
   return [body, { statusCode: response.status, message: response.statusText }];
 };
 
 export const setJwtToken = (token: string) => {
-  localStorage.setItem('token', token);
+  localStorage.setItem("token", token);
 };
 
 export const unsetJwtToken = () => {
-  localStorage.removeItem('token');
+  localStorage.removeItem("token");
 };
 
 export const getJwtToken = () => {
-  return localStorage.getItem('token');
+  return localStorage.getItem("token");
 };
 
 export const useApi = (): ApiService => {
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const fetch = useCallback(
-    async (method: HttpMethod, params: RequestOptions) => {
+    async <T>(method: HttpMethod, params: RequestOptions) => {
       setIsFetching(true);
-      const response = await request(method, params).finally(() =>
+      const response = await request<T>(method, params).finally(() =>
         setIsFetching(false)
       );
       return response;

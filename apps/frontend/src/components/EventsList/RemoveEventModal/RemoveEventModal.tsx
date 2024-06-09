@@ -1,18 +1,19 @@
-import { useCallback } from 'react';
-import Modal from '../../common/Modal/Modal';
-import classes from './RemoveEventModal.module.scss';
-import { useMotionAnimate } from 'motion-hooks';
-import { LoadingSpinner } from '../../common/LoadingSpinner/LoadingSpinner';
-import { Event } from '../../../types/Event';
-import Button from '../../common/Button/Button';
-import { EventType, useEvents } from '../../../contexts/eventsContext';
-import { useSnackBar } from '../../../contexts/snackBarContext';
-import { ResponseStatus } from '../../../enums/ResponseStatus';
+import { useCallback } from "react";
+import Modal from "../../common/Modal/Modal";
+import classes from "./RemoveEventModal.module.scss";
+import { useMotionAnimate } from "motion-hooks";
+import { LoadingSpinner } from "../../common/LoadingSpinner/LoadingSpinner";
+import { Event } from "../../../types/Event";
+import Button from "../../common/Button/Button";
+import { useEvents } from "../../../contexts/eventsContext";
+import { useSnackBar } from "../../../contexts/snackBarContext";
+import { ResponseStatus } from "../../../enums/ResponseStatus";
+import { EventNavigationTab } from "../../../enums/EventNavigationTab";
 
 type RemoveEventProps = {
   data: Event | undefined;
   isOpen: boolean;
-  selectedTab: EventType;
+  selectedTab: EventNavigationTab;
   onClose: () => void;
 };
 
@@ -27,10 +28,10 @@ const RemoveEventModal = ({
 
   const { play: closeAnimation } = useMotionAnimate(
     `.${classes.removeEventModal}`,
-    { top: '150%' },
+    { top: "150%" },
     {
       duration: 0.5,
-      easing: 'ease-in',
+      easing: "ease-in",
     }
   );
 
@@ -41,20 +42,21 @@ const RemoveEventModal = ({
   }, [closeAnimation, onClose]);
 
   const handleRemoveEvent = useCallback(async () => {
-    if (id) {
-      const response = await removeEvent(id);
-      if (response?.status !== ResponseStatus.SUCCESS) {
-        handleShowSnackBar(
-          'Error during removing event has occured! Please try again.',
-          'error'
-        );
-        return false;
-      }
-      handleShowSnackBar('Event removed successfully!', 'success');
-      getEvents(selectedTab);
-      handleModalClose();
-      return true;
+    if (!id) {
+      return false;
     }
+    const response = await removeEvent(id);
+    if (response?.status !== ResponseStatus.SUCCESS) {
+      handleShowSnackBar(
+        "Error during removing event has occured! Please try again.",
+        ResponseStatus.ERROR
+      );
+      return false;
+    }
+    handleShowSnackBar("Event removed successfully!", ResponseStatus.SUCCESS);
+    getEvents(selectedTab);
+    handleModalClose();
+    return true;
   }, [
     removeEvent,
     handleShowSnackBar,
@@ -79,7 +81,7 @@ const RemoveEventModal = ({
             <p>
               <span>Date: </span>
               <strong>
-                {date ? new Date(date * 1000).toLocaleString() : ''}
+                {date ? new Date(date * 1000).toLocaleString() : ""}
               </strong>
             </p>
             <p>

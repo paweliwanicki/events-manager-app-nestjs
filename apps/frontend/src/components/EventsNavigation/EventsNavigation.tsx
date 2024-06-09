@@ -1,12 +1,13 @@
-import { useCallback } from 'react';
-import Button from '../common/Button/Button';
-import classes from './EventsNavigation.module.scss';
-import { EventType, useEvents } from '../../contexts/eventsContext';
+import { useCallback } from "react";
+import Button from "../common/Button/Button";
+import classes from "./EventsNavigation.module.scss";
+import { useEvents } from "../../contexts/eventsContext";
+import { EventNavigationTab } from "../../enums/EventNavigationTab";
 
 type EventsNavigationProps = {
-  selectedTab: EventType;
+  selectedTab: EventNavigationTab;
   onClickAddEvent: () => void;
-  onChangeTab: (event: EventType) => void;
+  onChangeTab: (event: EventNavigationTab) => void;
 };
 
 const EventsNavigation = ({
@@ -17,45 +18,29 @@ const EventsNavigation = ({
   const { getEvents } = useEvents();
 
   const handleGetEventsByType = useCallback(
-    (type: EventType) => {
-      getEvents(type);
-      onChangeTab(type);
+    (tab: EventNavigationTab) => {
+      getEvents(tab);
+      onChangeTab(tab);
     },
     [getEvents, onChangeTab]
   );
 
   return (
     <div className={classes.eventsNavigation}>
+      <p>
+        <strong>Events:</strong>
+      </p>
       <menu>
-        <li>
-          <strong>Events:</strong>
-        </li>
-        <li
-          className={selectedTab === 'MY' ? classes.active : ''}
-          onClick={() => handleGetEventsByType('MY')}
-        >
-          My
-        </li>
-        <li
-          className={selectedTab === 'PUBLIC' ? classes.active : ''}
-          onClick={() => handleGetEventsByType('PUBLIC')}
-        >
-          Public
-        </li>
-        <li
-          className={selectedTab === 'PRIVATE' ? classes.active : ''}
-          onClick={() => handleGetEventsByType('PRIVATE')}
-        >
-          Private
-        </li>
-        <li
-          className={selectedTab === 'PARTICIPATION' ? classes.active : ''}
-          onClick={() => handleGetEventsByType('PARTICIPATION')}
-        >
-          Participation
-        </li>
+        {Object.entries(EventNavigationTab).map(([tab, label]) => (
+          <li
+            key={`event-${tab}`}
+            className={selectedTab === tab ? classes.active : ""}
+            onClick={() => handleGetEventsByType(tab as EventNavigationTab)}
+          >
+            <span>{label}</span>
+          </li>
+        ))}
       </menu>
-
       <Button variant="primary" onClick={onClickAddEvent}>
         Add Event
       </Button>

@@ -1,41 +1,22 @@
-import EventsList from '../../components/EventsList/EventsList';
-import EventsNavigation from '../../components/EventsNavigation/EventsNavigation';
-import classes from './Dashboard.module.scss';
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  useMapEvents,
-} from 'react-leaflet';
-import { useState, useCallback, useEffect } from 'react';
-import { Event } from '../../types/Event';
-import AddEditEventModal from '../../components/AddEditEventModal/AddEditEventModal';
-import { EventType, useEvents } from '../../contexts/eventsContext';
-import RemoveEventModal from '../../components/EventsList/RemoveEventModal/RemoveEventModal';
-import UserCurrentLocationMarker from '../../components/UserCurrentLocationMarker/UserCurrentLocationMarker';
+import EventsList from "../../components/EventsList/EventsList";
+import EventsNavigation from "../../components/EventsNavigation/EventsNavigation";
+import classes from "./Dashboard.module.scss";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useState, useCallback, useEffect } from "react";
+import { Event } from "../../types/Event";
+import AddEditEventModal from "../../components/AddEditEventModal/AddEditEventModal";
+import { useEvents } from "../../contexts/eventsContext";
+import RemoveEventModal from "../../components/EventsList/RemoveEventModal/RemoveEventModal";
+import UserCurrentLocationMarker from "../../components/UserCurrentLocationMarker/UserCurrentLocationMarker";
+import { EventNavigationTab } from "../../enums/EventNavigationTab";
 
-type EventOnMapSelectionProps = {
-  onEventSelect: (e: any) => void;
-};
-
-const EventOnMapSelection = ({ onEventSelect }: EventOnMapSelectionProps) => {
-  const map = useMapEvents({
-    click() {
-      map.locate();
-    },
-    locationfound(e) {
-      map.flyTo(e.latlng, map.getZoom());
-
-      if ('id' in e) {
-        onEventSelect(e.latlng);
-      }
-    },
-  });
-  return null;
-};
-
-const DisplayEventPosition = ({ map, location }) => {
+const DisplayEventPosition = ({
+  map,
+  location,
+}: {
+  map: { setView: (location: unknown) => void } | null;
+  location: unknown;
+}) => {
   useEffect(() => {
     map && location && map.setView(location);
   }, [map, location]);
@@ -46,16 +27,18 @@ const DisplayEventPosition = ({ map, location }) => {
 const center = { lat: 51.11117431307491, lng: 17.0354175567627 }; // Wroclaw
 
 const Dashboard = () => {
-  const [map, setMap] = useState(null);
   const { events } = useEvents();
+  const [map, setMap] = useState(null);
   const [showAddEditEventModal, setShowAddEditEventModal] =
     useState<boolean>(false);
   const [showRemoveEventModal, setShowRemoveEventModal] =
     useState<boolean>(false);
 
-  const [addEditEventModalData, setaddEditEventModalData] = useState<Event>();
+  const [addEditEventModalData, setAddEditEventModalData] = useState<Event>();
   const [selectedEvent, setSelectedEvent] = useState<Event>();
-  const [selectedTab, setSelectedTab] = useState<EventType>('MY');
+  const [selectedTab, setSelectedTab] = useState<EventNavigationTab>(
+    EventNavigationTab.My
+  );
 
   const handleSelectEvent = useCallback((event: Event) => {
     setSelectedEvent(event);
@@ -63,9 +46,9 @@ const Dashboard = () => {
       `#event-li-${event.id}`
     );
     selectedEventElement?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    }); // this should be done on refs!
+      behavior: "smooth",
+      block: "center",
+    });
   }, []);
 
   const handleShowAddEditEventModal = useCallback(() => {
@@ -77,16 +60,16 @@ const Dashboard = () => {
   }, []);
 
   const handleAddNewEvent = useCallback(() => {
-    setaddEditEventModalData(undefined);
+    setAddEditEventModalData(undefined);
     handleShowAddEditEventModal();
   }, [handleShowAddEditEventModal]);
 
   const handleEditEvent = useCallback(() => {
-    setaddEditEventModalData(selectedEvent);
+    setAddEditEventModalData(selectedEvent);
     handleShowAddEditEventModal();
   }, [selectedEvent, handleShowAddEditEventModal]);
 
-  const handleSelectTab = useCallback((event: EventType) => {
+  const handleSelectTab = useCallback((event: EventNavigationTab) => {
     setSelectedEvent(undefined);
     setSelectedTab(event);
   }, []);
@@ -113,12 +96,11 @@ const Dashboard = () => {
             center={center}
             zoom={13}
             scrollWheelZoom={true}
-            style={{ height: '100%', width: '100%' }}
+            style={{ height: "100%", width: "100%" }}
           >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {events.map((event: Event) => {
               const { lat, lng, address } = event.location;
-
               return (
                 <Marker
                   key={`event-${event.id}-marker`}
@@ -156,7 +138,6 @@ const Dashboard = () => {
                   : undefined
               }
             />
-            <EventOnMapSelection onEventSelect={handleSelectEvent} />
           </MapContainer>
         </div>
       </div>

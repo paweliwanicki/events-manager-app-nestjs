@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { EventLocation } from '../../hooks/useAddEditEventModal';
-import { useMap, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import iconMarker from '../../assets/icons/user_marker.svg';
+import { useState, useEffect } from "react";
+import { EventLocation } from "../../hooks/useAddEditEventModal";
+import { useMap, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import iconMarker from "../../assets/icons/user_marker.svg";
 
 const userMarker = L.icon({
   iconUrl: iconMarker,
@@ -19,13 +19,14 @@ const UserCurrentLocationMarker = () => {
   const map = useMap();
 
   useEffect(() => {
-    map.locate().on('locationfound', function (e) {
+    map.locate().on("locationfound", function (e) {
       setPosition(e.latlng as EventLocation);
       map.flyTo(e.latlng, map.getZoom());
       const radius = e.accuracy;
       const circle = L.circle(e.latlng, radius, {
-        color: '#5964e0',
+        color: "#5964e0",
         fillOpacity: 0.1,
+        radius,
       });
       circle.addTo(map);
     });

@@ -1,18 +1,19 @@
-import { useCallback, useMemo } from 'react';
-import { Event } from '../../types/Event';
-import classes from './EventsList.module.scss';
+import { useCallback, useMemo } from "react";
+import { Event } from "../../types/Event";
+import classes from "./EventsList.module.scss";
 import ContextMenu, {
   ContextMenuOption,
-} from '../common/ContextMenu/ContextMenu';
-import { useUser } from '../../contexts/userContext';
-import { EventType, useEvents } from '../../contexts/eventsContext';
-import { useSnackBar } from '../../contexts/snackBarContext';
-import { ResponseStatus } from '../../enums/ResponseStatus';
+} from "../common/ContextMenu/ContextMenu";
+import { useUser } from "../../contexts/userContext";
+import { useEvents } from "../../contexts/eventsContext";
+import { useSnackBar } from "../../contexts/snackBarContext";
+import { ResponseStatus } from "../../enums/ResponseStatus";
+import { EventNavigationTab } from "../../enums/EventNavigationTab";
 
 type EventsListProps = {
   data: Event[];
   selectedEvent: Event | undefined;
-  selectedTab: EventType;
+  selectedTab: EventNavigationTab;
   onSelectEvent: (event: Event) => void;
   onRemoveEvent: () => void;
   onEditEvent: () => void;
@@ -55,25 +56,21 @@ const EventsList = ({
   const handleJoinEvent = useCallback(
     async (id: number) => {
       const response = await joinEvent(id);
-      if (response) {
-        if (response.status !== ResponseStatus.SUCCESS) {
-          handleShowSnackBar(
-            'Error during joining to the event! Please try again.',
-            'error'
-          );
-          return false;
-        }
-
-        handleShowSnackBar('Successfully join the event!', 'success');
-        await getParticipatedEvents();
-        getEvents(selectedTab);
-        return true;
+      if (response?.status !== ResponseStatus.SUCCESS) {
+        handleShowSnackBar(
+          "Error during joining to the event! Please try again.",
+          ResponseStatus.ERROR
+        );
+        return false;
       }
+
       handleShowSnackBar(
-        'Error during joining to the event! Please try again.',
-        'error'
+        "Successfully join the event!",
+        ResponseStatus.SUCCESS
       );
-      return false;
+      await getParticipatedEvents();
+      getEvents(selectedTab);
+      return true;
     },
     [
       joinEvent,
@@ -87,24 +84,20 @@ const EventsList = ({
   const handleLeaveEvent = useCallback(
     async (id: number) => {
       const response = await leaveEvent(id);
-      if (response) {
-        if (response.status !== ResponseStatus.SUCCESS) {
-          handleShowSnackBar(
-            'Error during leaving event! Please try again.',
-            'error'
-          );
-          return false;
-        }
-        handleShowSnackBar('Successfully leave the event!', 'success');
-        await getParticipatedEvents();
-        getEvents(selectedTab);
-        return true;
+      if (response?.status !== ResponseStatus.SUCCESS) {
+        handleShowSnackBar(
+          "Error during leaving event! Please try again.",
+          ResponseStatus.ERROR
+        );
+        return false;
       }
       handleShowSnackBar(
-        'Error during leaving event! Please try again.',
-        'error'
+        "Successfully leave the event!",
+        ResponseStatus.SUCCESS
       );
-      return false;
+      await getParticipatedEvents();
+      getEvents(selectedTab);
+      return true;
     },
     [
       leaveEvent,
@@ -118,11 +111,11 @@ const EventsList = ({
   const EVENT_MENU_OPTIONS: ContextMenuOption[] = useMemo(
     () => [
       {
-        label: 'Edit',
+        label: "Edit",
         action: () => handleEditEvent(),
       },
       {
-        label: 'Remove',
+        label: "Remove",
         action: () => handleRemoveEvent(),
       },
     ],
@@ -133,15 +126,15 @@ const EventsList = ({
     <div className={classes.eventsListContainer}>
       <ul>
         {!data.length ? (
-          <p>{isFetching ? 'Fetching events...' : 'No events found!'}</p>
+          <p>{isFetching ? "Fetching events..." : "No events found!"}</p>
         ) : (
           data.map((event: Event) => {
-            const alreadyParticipate = participatedEvents.find(
-              (participatedEvent: Event) => participatedEvent.id === event.id
-            );
-
-            const showParticipateBtn = user && selectedTab !== 'MY';
-            const showSettingsBtn = user && selectedTab === 'MY';
+            const showSettingsBtn =
+              user && selectedTab === EventNavigationTab.My;
+            const { participationId } =
+              participatedEvents.find(
+                (participatedEvent: Event) => participatedEvent.id === event.id
+              ) ?? {};
 
             return (
               <li
@@ -149,9 +142,7 @@ const EventsList = ({
                 key={`event-list-${event.id}`}
                 onClick={() => handleEventOnClick(event)}
                 className={
-                  selectedEvent && selectedEvent.id === event.id
-                    ? classes.selected
-                    : ''
+                  selectedEvent?.id === event.id ? classes.selected : ""
                 }
               >
                 {showSettingsBtn && (
@@ -164,17 +155,16 @@ const EventsList = ({
                     height={24}
                   />
                 )}
-                {showParticipateBtn && (
+                {!showSettingsBtn && (
                   <button
                     onClick={() =>
-                      !alreadyParticipate
-                        ? handleJoinEvent(event.id)
-                        : alreadyParticipate.participationId &&
-                          handleLeaveEvent(alreadyParticipate.participationId)
+                      participationId
+                        ? handleLeaveEvent(participationId)
+                        : handleJoinEvent(event.id)
                     }
                     className={classes.btnJoinEvent}
                   >
-                    {!alreadyParticipate ? 'Join' : 'Leave'}
+                    {participationId ? "Leave" : "Join"}
                   </button>
                 )}
                 <h4>{event.name}</h4>

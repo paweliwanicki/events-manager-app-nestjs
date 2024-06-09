@@ -46,38 +46,39 @@ const FriendsPanel = () => {
   } = useFriendsPanel();
 
   const [selectedNewFriend, setSelectedNewFriend] =
-    useState<SelectOption | null>();
+    useState<SelectOption | null>(null);
 
   const handleSelectNewFriend = useCallback((value: SelectOption | null) => {
     setSelectedNewFriend(value);
   }, []);
 
   const handleAcceptFriendRequestAction = useCallback(
-    ({ friendshipId }: Friendship) => {
-      acceptFriendRequest(friendshipId);
+    ({ id }: Friendship) => {
+      acceptFriendRequest(id);
     },
     [acceptFriendRequest]
   );
 
   const handleRemoveFriendRequestAction = useCallback(
-    ({ friendshipId }: Friendship) => {
-      removeFriendRequest(friendshipId);
+    ({ id }: Friendship) => {
+      removeFriendRequest(id);
     },
     [removeFriendRequest]
   );
 
   const handleRemoveFriendAction = useCallback(
-    ({ friendshipId }: Friendship) => {
-      removeFriend(friendshipId);
+    ({ id }: Friendship) => {
+      removeFriend(id);
     },
     [removeFriend]
   );
 
   const handleAddFriend = useCallback(() => {
-    if (selectedNewFriend) {
-      addFriend(selectedNewFriend.value);
-      handleSelectNewFriend(null);
+    if (!selectedNewFriend) {
+      return;
     }
+    addFriend(selectedNewFriend.value);
+    handleSelectNewFriend(null);
   }, [addFriend, handleSelectNewFriend, selectedNewFriend]);
 
   const FRIENDS_ACTIONS = useMemo(

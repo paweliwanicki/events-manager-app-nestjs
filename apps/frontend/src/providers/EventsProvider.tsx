@@ -1,10 +1,11 @@
-import { useState, ReactNode, useMemo, useCallback, useEffect } from 'react';
-import { HttpMethod } from '../enums/HttpMethods';
-import { useApi } from '../hooks/useApi';
-import { EventType, EventsContext } from '../contexts/eventsContext';
-import { Event } from '../types/Event';
-import { useUser } from '../contexts/userContext';
-import { ResponseStatus } from '../enums/ResponseStatus';
+import { useState, ReactNode, useMemo, useCallback, useEffect } from "react";
+import { HttpMethod } from "../enums/HttpMethods";
+import { useApi } from "../hooks/useApi";
+import { EventsContext } from "../contexts/eventsContext";
+import { Event } from "../types/Event";
+import { useUser } from "../contexts/userContext";
+import { ResponseStatus } from "../enums/ResponseStatus";
+import { EventNavigationTab } from "../enums/EventNavigationTab";
 
 export type GenericEventsResponse = {
   message: string;
@@ -19,6 +20,8 @@ type EventsProviderProps = {
   children: ReactNode;
 };
 
+const EVENT_API_PATH = "/api/events";
+
 export const EventsProvider = ({ children }: EventsProviderProps) => {
   const { fetch, isFetching } = useApi();
   const { user } = useUser();
@@ -26,16 +29,16 @@ export const EventsProvider = ({ children }: EventsProviderProps) => {
   const [participatedEvents, setParticipatedEvents] = useState<Event[]>([]);
 
   const getEvents = useCallback(
-    async (type: EventType) => {
+    async (tab: EventNavigationTab) => {
       setEvents([]);
       const [{ data }] = await fetch<GetEventsResponse>(HttpMethod.GET, {
-        path: `/api/events/${type.toLowerCase()}`,
+        path: `${EVENT_API_PATH}/${tab.toLowerCase()}`,
       });
 
       if (!data) {
         return false;
       }
-      if (type === 'PARTICIPATION') {
+      if (tab === EventNavigationTab.Participation) {
         setParticipatedEvents(data);
       }
       setEvents(data);
@@ -46,7 +49,7 @@ export const EventsProvider = ({ children }: EventsProviderProps) => {
 
   const getParticipatedEvents = useCallback(async () => {
     const [{ data }] = await fetch<GetEventsResponse>(HttpMethod.GET, {
-      path: `/api/events/participation`,
+      path: `${EVENT_API_PATH}/participation`,
     });
 
     if (!data) {
@@ -60,7 +63,7 @@ export const EventsProvider = ({ children }: EventsProviderProps) => {
   const removeEvent = useCallback(
     async (id: number) => {
       const [response] = await fetch<GenericEventsResponse>(HttpMethod.DELETE, {
-        path: `/api/events/${id}`,
+        path: `${EVENT_API_PATH}/${id}`,
       });
       return response;
     },
@@ -70,7 +73,7 @@ export const EventsProvider = ({ children }: EventsProviderProps) => {
   const joinEvent = useCallback(
     async (id: number) => {
       const [response] = await fetch<GenericEventsResponse>(HttpMethod.POST, {
-        path: `/api/events/participation/${id}`,
+        path: `${EVENT_API_PATH}/participation/${id}`,
       });
       return response;
     },
@@ -80,7 +83,7 @@ export const EventsProvider = ({ children }: EventsProviderProps) => {
   const leaveEvent = useCallback(
     async (id: number) => {
       const [response] = await fetch<GenericEventsResponse>(HttpMethod.DELETE, {
-        path: `/api/events/participation/${id}`,
+        path: `${EVENT_API_PATH}/participation/${id}`,
       });
       return response;
     },
@@ -89,7 +92,7 @@ export const EventsProvider = ({ children }: EventsProviderProps) => {
 
   useEffect(() => {
     if (user) {
-      getEvents('MY');
+      getEvents(EventNavigationTab.My);
       getParticipatedEvents();
     }
   }, [user, getEvents, getParticipatedEvents]);

@@ -1,4 +1,4 @@
-@use '../../../styles/variables.scss';
+@use "../../../styles/variables.scss";
 
 .contextMenuBox {
   position: relative;
@@ -14,12 +14,15 @@
     height: 0;
     box-sizing: border-box;
     position: absolute;
-    top: 30px;
     right: 0px;
     padding-left: 0;
     z-index: 999;
     height: fit-content;
     background-color: variables.$white;
+
+    &.open {
+      outline: 1px solid variables.$light-grey;
+    }
 
     .option {
       margin: 0 10px;
@@ -38,8 +41,8 @@
       }
 
       &:hover {
-        color: variables.$violet;
-        text-shadow: 0px 0px 1px variables.$violet;
+        color: variables.$dark-blue;
+        text-shadow: 0px 0px 1px variables.$dark-blue;
       }
 
       a {

@@ -28,7 +28,7 @@
       position: relative;
 
       &.selected {
-        border-left: 3px solid variables.$very-dark-blue1;
+        border-left: 3px solid variables.$very-dark-blue;
         -webkit-box-shadow: 2px 5px 11px -1px variables.$dark-grey;
         -moz-box-shadow: 2px 5px 11px -1px variables.$dark-grey;
         box-shadow: 2px 5px 11px -1px variables.$dark-grey;

@@ -1,13 +1,13 @@
-import { ReactNode, useCallback, useState, useMemo } from 'react';
-import { useApi } from './useApi';
-import { HttpMethod } from '../enums/HttpMethods';
-import { useSnackBar } from '../contexts/snackBarContext';
-import { ResponseStatus } from '../enums/ResponseStatus';
-import { Event } from '../types/Event';
+import { ReactNode, useCallback, useState, useMemo } from "react";
+import { ResponseParams, useApi } from "./useApi";
+import { HttpMethod } from "../enums/HttpMethods";
+import { useSnackBar } from "../contexts/snackBarContext";
+import { ResponseStatus } from "../enums/ResponseStatus";
+import { Event } from "../types/Event";
 
-type InputError = 'EMPTY';
-type LocationMapError = 'NOT_SELECTED';
-type NewEventFormInput = 'NAME' | 'DESCRIPTION' | 'EVENT_DATE' | 'LOCATION';
+type InputError = "EMPTY";
+type LocationMapError = "NOT_SELECTED";
+type NewEventFormInput = "NAME" | "DESCRIPTION" | "EVENT_DATE" | "LOCATION";
 
 export type EventLocation = {
   lat: number;
@@ -51,15 +51,22 @@ type AddEditEventForm = {
     isPrivate: boolean,
     id?: number
   ) => Promise<boolean>;
-  handleGetAddressDetails: (location: EventLocation) => Promise<unknown>; // fix that any!
+  handleGetAddressDetails: (
+    location: EventLocation
+  ) => Promise<
+    [
+      body: { type: string; features: [{ properties: unknown }] },
+      resParams: ResponseParams
+    ]
+  >;
 };
 
 const INPUT_ERRORS_MESSAGES: Record<InputError, string> = {
-  EMPTY: 'Can not be empty!',
+  EMPTY: "Can not be empty!",
 } as const;
 
 const LOCATION_ERROR_MESSAGE: Record<LocationMapError, string> = {
-  NOT_SELECTED: 'Select your event location!',
+  NOT_SELECTED: "Select your event location!",
 } as const;
 
 export const useNewEventModal = (): AddEditEventForm => {
@@ -84,7 +91,10 @@ export const useNewEventModal = (): AddEditEventForm => {
   const handleGetAddressDetails = useCallback(
     async (location: EventLocation) => {
       const { lng, lat } = location;
-      const response = await fetch<EventLocation>(HttpMethod.GET, {
+      const response = await fetch<{
+        type: string;
+        features: [{ properties: unknown }];
+      }>(HttpMethod.GET, {
         path: `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&apiKey=dde5b9dfbec541c0bf8d0e42676e1e27`,
       });
       return response;
@@ -102,9 +112,9 @@ export const useNewEventModal = (): AddEditEventForm => {
       id?: number
     ) => {
       const httpMethod = id ? HttpMethod.PATCH : HttpMethod.POST;
-      const path = id ? `/api/events/${id}` : '/api/events';
+      const path = id ? `/api/events/${id}` : "/api/events";
 
-      const status = await fetch<Event>(httpMethod, {
+      const status = fetch<Event>(httpMethod, {
         path,
         payload: JSON.stringify({
           name,
@@ -117,14 +127,23 @@ export const useNewEventModal = (): AddEditEventForm => {
         .then((response) => {
           const [data] = response;
           if (!data.id) {
-            handleShowSnackBar('Error has occured! Please try again.', 'error');
+            handleShowSnackBar(
+              "Error has occured! Please try again.",
+              ResponseStatus.ERROR
+            );
             return false;
           }
-          handleShowSnackBar('Event saved successfully!', 'success');
+          handleShowSnackBar(
+            "Event saved successfully!",
+            ResponseStatus.SUCCESS
+          );
           return true;
         })
         .catch(() => {
-          handleShowSnackBar('Error has occured! Please try again.', 'error');
+          handleShowSnackBar(
+            "Error has occured! Please try again.",
+            ResponseStatus.ERROR
+          );
           return false;
         });
       return status;
@@ -141,7 +160,7 @@ export const useNewEventModal = (): AddEditEventForm => {
     ) => {
       let isValid = true;
 
-      if (name === '') {
+      if (name === "") {
         setNameError(INPUT_ERRORS_MESSAGES.EMPTY);
         isValid = false;
       }
@@ -151,12 +170,12 @@ export const useNewEventModal = (): AddEditEventForm => {
         isValid = false;
       }
 
-      if (description === '') {
+      if (description === "") {
         setDescriptionError(INPUT_ERRORS_MESSAGES.EMPTY);
         isValid = false;
       }
 
-      if (!location || !('lat' in location && 'lng' in location)) {
+      if (!location || !("lat" in location && "lng" in location)) {
         setLocationError(LOCATION_ERROR_MESSAGE.NOT_SELECTED);
         isValid = false;
       }
@@ -189,7 +208,7 @@ export const useNewEventModal = (): AddEditEventForm => {
     setLocationIsValidated(false);
   }, []);
 
-  const validationCleaners: Record<NewEventFormInput | 'ALL', () => void> =
+  const validationCleaners: Record<NewEventFormInput | "ALL", () => void> =
     useMemo(() => {
       return {
         NAME: () => {
@@ -217,7 +236,7 @@ export const useNewEventModal = (): AddEditEventForm => {
 
   const clearValidationAndError = useCallback(
     (input?: NewEventFormInput) => {
-      validationCleaners[input ?? 'ALL']();
+      validationCleaners[input ?? "ALL"]();
     },
     [validationCleaners]
   );
