@@ -4,16 +4,16 @@ import {
   Popup,
   TileLayer,
   useMapEvents,
-} from "react-leaflet";
-import classes from "./EventLocationMap.module.scss";
+} from 'react-leaflet';
+import classes from './EventLocationMap.module.scss';
 import {
   EventLocation,
   useNewEventModal,
-} from "../../hooks/useAddEditEventModal";
-import { useState, useEffect, useCallback } from "react";
-import UserCurrentLocationMarker from "../UserCurrentLocationMarker/UserCurrentLocationMarker";
-import { LoadingSpinner } from "../common/LoadingSpinner/LoadingSpinner";
-import { Event } from "../../types/Event";
+} from '../../hooks/useAddEditEventModal';
+import { useState, useEffect, useCallback } from 'react';
+import UserCurrentLocationMarker from '../UserCurrentLocationMarker/UserCurrentLocationMarker';
+import { LoadingSpinner } from '../common/LoadingSpinner/LoadingSpinner';
+import { Event } from '../../types/Event';
 
 type EventLocationMarkerProps = {
   onLocationClick: (position: unknown, address: string) => void;
@@ -49,8 +49,8 @@ const EventLocationMarker = ({
             city: string;
           };
           const newAddress = `${
-            addressDetails.street ? addressDetails.street : ""
-          } ${addressDetails.housenumber ? addressDetails.housenumber : ""}, ${
+            addressDetails.street ? addressDetails.street : ''
+          } ${addressDetails.housenumber ? addressDetails.housenumber : ''}, ${
             addressDetails.city
           }`;
           if (newAddress) {
@@ -105,7 +105,6 @@ const DisplayEventPosition = ({
   map: { setView: (location: unknown) => void };
   location: unknown;
 }) => {
-  console.log(map, location);
   useEffect(() => {
     map && location && map.setView(location);
   }, [map, location]);
@@ -123,8 +122,8 @@ const EventLocationMap = ({
 }: EventLocationMapProps) => {
   const [map, setMap] = useState(null);
 
-  let validClassName = "";
-  const showValidationInfo = errorText !== "" && isValidated;
+  let validClassName = '';
+  const showValidationInfo = errorText !== '' && isValidated;
   if (showValidationInfo) {
     validClassName = !hasError ? classes.valid : classes.error;
   }
@@ -141,7 +140,7 @@ const EventLocationMap = ({
           ref={setMap}
           center={position ?? cracowPosition}
           zoom={11}
-          style={{ height: "300px", width: "100%" }}
+          style={{ height: '300px', width: '100%' }}
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <EventLocationMarker

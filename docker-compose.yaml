@@ -5,7 +5,7 @@ services:
     container_name: frontend
     build:
       context: ./apps/frontend
-      dockerfile: Dockerfile.production
+      dockerfile: Dockerfile
     env_file: .env
     working_dir: /app/frontend
     ports:
@@ -17,7 +17,7 @@ services:
     container_name: backend
     build:
       context: ./apps/backend
-      dockerfile: Dockerfile.production
+      dockerfile: Dockerfile
     restart: always
     env_file: .env
     networks:

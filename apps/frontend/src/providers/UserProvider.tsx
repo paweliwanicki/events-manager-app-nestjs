@@ -1,29 +1,41 @@
-import { useState, ReactNode, useMemo, useCallback } from 'react';
+import { useState, ReactNode, useMemo, useCallback, useEffect } from 'react';
 import { User } from '../types/User';
 import { UserContext } from '../contexts/userContext';
+import { useCookies } from 'react-cookie';
+import { USER_COOKIE_KEY, userCookie } from '../utils/cookies';
 
 type UserProviderProps = {
   children: ReactNode;
 };
 
-const getCurrentUser = (): User | undefined => {
-  const currentUser = sessionStorage.getItem('user');
-  return currentUser ? (JSON.parse(currentUser) as User) : undefined;
-};
-
-const setCurrentUser = (user: User | undefined) => {
-  user
-    ? sessionStorage.setItem('user', JSON.stringify(user))
-    : sessionStorage.removeItem('user');
-};
-
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const [user, setUser] = useState<User | undefined>(() => getCurrentUser());
+  const [user, setUser] = useState<User | undefined>();
+  const [cookies, setCookie, removeCookie] = useCookies();
 
-  const changeUser = useCallback((user?: User) => {
-    setUser(user);
-    setCurrentUser(user);
-  }, []);
+  const { key, expires } = userCookie();
+  const changeUser = useCallback(
+    (newUser?: User) => {
+      setUser(newUser);
+      if (!newUser && user?.sub) {
+        removeCookie(key);
+        return;
+      }
+      if (newUser?.sub) {
+        setCookie(key, newUser, {
+          expires: new Date(expires),
+          secure: true,
+        });
+      }
+    },
+    [key, expires, user, removeCookie, setCookie]
+  );
+
+  useEffect(() => {
+    if (user) {
+      return;
+    }
+    setUser(cookies[USER_COOKIE_KEY]);
+  }, [user, cookies]);
 
   const contextValue = useMemo(
     () => ({

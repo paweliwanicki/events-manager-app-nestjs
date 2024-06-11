@@ -1,10 +1,11 @@
-import { useCallback, useState } from "react";
-import { HttpMethod } from "../enums/HttpMethods";
+import { useCallback, useState } from 'react';
+import { HttpMethod } from '../enums/HttpMethods';
 
 type RequestOptions = {
   path: string;
   payload?: string;
   contentType?: string;
+  customHeaders?: Record<string, string>;
 };
 
 export type ResponseParams = {
@@ -23,13 +24,13 @@ type ApiService = {
 const request = async <T>(
   method: HttpMethod,
   params: RequestOptions,
-  customHeaders: Record<string, string> | undefined = undefined
+  customHeaders?: Record<string, string>
 ): Promise<[body: T, resParams: ResponseParams]> => {
   let body = null;
   const { path, payload, contentType } = params;
 
   const headers = {
-    "Content-Type": contentType ? contentType : "application/json",
+    'Content-Type': contentType ? contentType : 'application/json',
     ...customHeaders,
   };
 
@@ -42,31 +43,20 @@ const request = async <T>(
   try {
     body = await response.json();
   } catch {
-    console.error("Error while parsing the response :(");
+    console.error('Error while parsing the response :(');
   }
 
   return [body, { statusCode: response.status, message: response.statusText }];
-};
-
-export const setJwtToken = (token: string) => {
-  localStorage.setItem("token", token);
-};
-
-export const unsetJwtToken = () => {
-  localStorage.removeItem("token");
-};
-
-export const getJwtToken = () => {
-  return localStorage.getItem("token");
 };
 
 export const useApi = (): ApiService => {
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const fetch = useCallback(
     async <T>(method: HttpMethod, params: RequestOptions) => {
+      const { customHeaders } = params;
       setIsFetching(true);
-      const response = await request<T>(method, params).finally(() =>
-        setIsFetching(false)
+      const response = await request<T>(method, params, customHeaders).finally(
+        () => setIsFetching(false)
       );
       return response;
     },

@@ -1,19 +1,19 @@
-import Table from "../../components/common/Table/Table";
-import classes from "./FriendsPanel.module.scss";
-import { useMemo, useCallback, useState, useEffect } from "react";
-import Select from "react-select";
-import Button from "../../components/common/Button/Button";
+import Table from '../../components/common/Table/Table';
+import classes from './FriendsPanel.module.scss';
+import { useMemo, useCallback, useState, useEffect } from 'react';
+import Select from 'react-select';
+import Button from '../../components/common/Button/Button';
 import {
   FriendshipUser,
   Friendship,
   useFriendsPanel,
-} from "../../hooks/useFriendsPanel";
-import SvgIcon from "../../components/common/SvgIcon/SvgIcon";
-import { useUser } from "../../contexts/userContext";
-import searchFriendIcon from "../../assets/icons/friend-search.svg";
-import requestIcon from "../../assets/icons/request.svg";
-import requestSentIcon from "../../assets/icons/request-sent.svg";
-import friendsIcon from "../../assets/icons/friends.svg";
+} from '../../hooks/useFriendsPanel';
+import SvgIcon from '../../components/common/SvgIcon/SvgIcon';
+import { useUser } from '../../contexts/userContext';
+import searchFriendIcon from '../../assets/icons/friend-search.svg';
+import requestIcon from '../../assets/icons/request.svg';
+import requestSentIcon from '../../assets/icons/request-sent.svg';
+import friendsIcon from '../../assets/icons/friends.svg';
 
 type SelectOption = {
   value: number;
@@ -29,7 +29,7 @@ const generateAvailableUsersToInviteSelectOptions = (
   }));
 };
 
-const friendsTableFields = ["firstName", "lastName"];
+const friendsTableFields = ['firstName', 'lastName'];
 
 const FriendsPanel = () => {
   const { user } = useUser();
@@ -151,6 +151,7 @@ const FriendsPanel = () => {
           data={friendsList}
           fields={friendsTableFields}
           actions={FRIENDS_ACTIONS}
+          noDataPlaceholderText="You have no friends ;<"
         />
       </div>
       <div className={classes.friendsRequestsList}>
@@ -161,6 +162,7 @@ const FriendsPanel = () => {
           data={sentFriendRequests}
           fields={friendsTableFields}
           actions={SENDED_FRIENDS_ACTIONS}
+          noDataPlaceholderText="No friend requests sent"
         />
       </div>
       <div className={classes.friendsRequestsList}>
@@ -171,6 +173,7 @@ const FriendsPanel = () => {
           data={receivedFriendsRequests}
           fields={friendsTableFields}
           actions={FRIENDS_REQUESTS_ACTIONS}
+          noDataPlaceholderText="No friends requsts received."
         />
       </div>
     </div>

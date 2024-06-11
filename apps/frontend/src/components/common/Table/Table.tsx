@@ -1,10 +1,11 @@
-import { ReactNode } from "react";
-import SvgIcon from "../SvgIcon/SvgIcon";
-import classes from "./Table.module.scss";
+import { ReactNode } from 'react';
+import SvgIcon from '../SvgIcon/SvgIcon';
+import classes from './Table.module.scss';
 
 type TableProps<T> = {
   data: T[];
   fields: string[];
+  noDataPlaceholderText?: ReactNode;
   id?: string;
   classNames?: string;
   actions?: Record<string, (el: T) => void>;
@@ -14,8 +15,9 @@ const Table = <T extends { id: number }>({
   data,
   fields,
   actions,
-  id = "",
-  classNames = "",
+  noDataPlaceholderText,
+  id = '',
+  classNames = '',
 }: TableProps<T>) => {
   return data?.length ? (
     <table id={id} className={`${classes.commonTable} ${classNames}`}>
@@ -66,7 +68,9 @@ const Table = <T extends { id: number }>({
       </tbody>
     </table>
   ) : (
-    <div className={classes.noData}>&#128683; No data</div>
+    <div className={classes.noData}>
+      {noDataPlaceholderText ? noDataPlaceholderText : 'No data'}
+    </div>
   );
 };
 

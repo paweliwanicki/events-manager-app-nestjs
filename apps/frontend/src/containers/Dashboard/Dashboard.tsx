@@ -1,14 +1,14 @@
-import EventsList from "../../components/EventsList/EventsList";
-import EventsNavigation from "../../components/EventsNavigation/EventsNavigation";
-import classes from "./Dashboard.module.scss";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { useState, useCallback, useEffect } from "react";
-import { Event } from "../../types/Event";
-import AddEditEventModal from "../../components/AddEditEventModal/AddEditEventModal";
-import { useEvents } from "../../contexts/eventsContext";
-import RemoveEventModal from "../../components/EventsList/RemoveEventModal/RemoveEventModal";
-import UserCurrentLocationMarker from "../../components/UserCurrentLocationMarker/UserCurrentLocationMarker";
-import { EventNavigationTab } from "../../enums/EventNavigationTab";
+import EventsList from '../../components/EventsList/EventsList';
+import EventsNavigation from '../../components/EventsNavigation/EventsNavigation';
+import classes from './Dashboard.module.scss';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { useState, useCallback, useEffect } from 'react';
+import { Event } from '../../types/Event';
+import AddEditEventModal from '../../components/AddEditEventModal/AddEditEventModal';
+import { useEvents } from '../../contexts/eventsContext';
+import RemoveEventModal from '../../components/EventsList/RemoveEventModal/RemoveEventModal';
+import UserCurrentLocationMarker from '../../components/UserCurrentLocationMarker/UserCurrentLocationMarker';
+import { EventNavigationTab } from '../../enums/EventNavigationTab';
 
 const DisplayEventPosition = ({
   map,
@@ -46,8 +46,8 @@ const Dashboard = () => {
       `#event-li-${event.id}`
     );
     selectedEventElement?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
+      behavior: 'smooth',
+      block: 'center',
     });
   }, []);
 
@@ -96,7 +96,7 @@ const Dashboard = () => {
             center={center}
             zoom={13}
             scrollWheelZoom={true}
-            style={{ height: "100%", width: "100%" }}
+            style={{ height: '100%', width: '100%' }}
           >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {events.map((event: Event) => {
