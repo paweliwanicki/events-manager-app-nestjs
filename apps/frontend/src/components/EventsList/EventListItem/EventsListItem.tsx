@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { Event } from '../../../types/Event';
-import classes from './EventsListItem.module.scss';
+import { useCallback, useEffect, useRef } from "react";
+import { Event } from "../../../types/Event";
+import classes from "./EventsListItem.module.scss";
 import ContextMenu, {
   ContextMenuOption,
-} from '../../common/ContextMenu/ContextMenu';
+} from "../../common/ContextMenu/ContextMenu";
 
 type EventsListItemProps = {
   event: Event;
@@ -62,7 +62,7 @@ const EventsListItem = ({
       ref={listItemRef}
       onClick={() => handleEventOnClick(event)}
       className={`${classes.eventListItem} ${
-        selectedEvent?.id === event.id ? classes.selected : ''
+        selectedEvent?.id === event.id ? classes.selected : ""
       }`}
     >
       {showSettingsBtn ? (
@@ -78,14 +78,14 @@ const EventsListItem = ({
         <button
           onClick={() =>
             participation
-              ? handleLeaveEvent(participation.id)
+              ? handleLeaveEvent(participation.participationId as number)
               : handleJoinEvent(event.id)
           }
           className={`${classes.btnJoinEvent} ${
             participation ? classes.leave : classes.join
           }`}
         >
-          {participation ? 'Leave' : 'Join'}
+          {participation ? "Leave" : "Join"}
         </button>
       )}
       <h4>{event.name}</h4>

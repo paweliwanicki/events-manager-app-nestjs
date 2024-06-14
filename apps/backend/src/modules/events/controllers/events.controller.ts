@@ -16,7 +16,8 @@ import { User } from '../../users/entities/user.entity';
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard';
 import { FiltersEventDto } from '../dtos/filters-event.dto';
 import { NewEventDto } from '../dtos/new-event.dto';
-import { EVENTS_EXCEPTION_MESSAGES } from '../events-messages';
+import { EVENTS_EXCEPTION_MESSAGES, EVENTS_MESSAGES } from '../events-messages';
+import { ResponseStatus } from 'src/enums/ResponseStatus';
 
 @Controller('events')
 @UseGuards(JwtAuthGuard)
@@ -87,7 +88,11 @@ export class EventsController {
 
   @Delete('/:id')
   async removeEvent(@Param('id') id: string) {
-    return await this.eventsService.remove(parseInt(id));
+    await this.eventsService.remove(parseInt(id));
+    return {
+      status: ResponseStatus.SUCCESS,
+      message: EVENTS_MESSAGES.REMOVED_SUCCESS,
+    };
   }
 
   @Patch('/:id')
@@ -101,6 +106,11 @@ export class EventsController {
       modifiedAt: Math.floor(new Date().getTime() / 1000),
       modifiedBy: user.id,
     };
-    return await this.eventsService.update(id, updEvent);
+    await this.eventsService.update(id, updEvent);
+
+    return {
+      status: ResponseStatus.SUCCESS,
+      message: EVENTS_MESSAGES.UPDATED_SUCCESS,
+    };
   }
 }

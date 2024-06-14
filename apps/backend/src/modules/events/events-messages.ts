@@ -1,3 +1,8 @@
+export const EVENTS_MESSAGES: Record<string, string> = {
+  REMOVED_SUCCESS: 'Event removed succesfully',
+  UPDATED_SUCCESS: 'Event updated succesfully',
+} as const;
+
 export const EVENTS_EXCEPTION_MESSAGES: Record<string, string> = {
   NOT_FOUND: 'Event not found',
 } as const;

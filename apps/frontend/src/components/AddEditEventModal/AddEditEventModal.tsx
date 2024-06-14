@@ -88,9 +88,9 @@ const AddEditEventModal = ({
       const eventDescription = descriptionRef.current?.value ?? "";
 
       const locationDetails = {
-        ...(eventLocation as EventLocation),
         address: eventAddress,
-      };
+        ...eventLocation,
+      } as EventLocation;
 
       const isValid = validateForm(
         eventName,
@@ -175,6 +175,7 @@ const AddEditEventModal = ({
     if (descriptionRef.current) descriptionRef.current.value = "";
     setEventDate(undefined);
     setEventLocation(undefined);
+    setEventAddress(undefined);
   }, []);
 
   useEffect(() => {

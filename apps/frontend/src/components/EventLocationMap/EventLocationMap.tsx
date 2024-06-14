@@ -16,8 +16,8 @@ import { LoadingSpinner } from '../common/LoadingSpinner/LoadingSpinner';
 import { Event } from '../../types/Event';
 
 type EventLocationMarkerProps = {
-  onLocationClick: (position: unknown, address: string) => void;
   eventLocation?: EventLocation;
+  onLocationClick: (position: unknown, address: string) => void;
 };
 
 type EventLocationMapProps = EventLocationMarkerProps & {
