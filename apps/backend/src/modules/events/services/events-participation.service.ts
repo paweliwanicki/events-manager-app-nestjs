@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, Repository } from 'typeorm';
+import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { EVENTS_EXCEPTION_MESSAGES } from '../events-messages';
 import { EventParticipation } from '../entities/event-participation.entity';
+import { Event } from '../entities/event.entity';
 
 @Injectable()
 export class EventsParticipationService {
@@ -18,8 +19,8 @@ export class EventsParticipationService {
 
   async findOneByWhere(where: FindOneOptions<EventParticipation>) {
     return await this.eventParticipationRepository.findOne({
-      ...where,
       relations: { user: true, event: true },
+      ...where,
     });
   }
 
@@ -38,7 +39,7 @@ export class EventsParticipationService {
     });
   }
 
-  async findAll(where: FindOneOptions<EventParticipation>) {
+  async findAll(where: FindOptionsWhere<EventParticipation>) {
     const results = await this.eventParticipationRepository.find({
       relations: { user: true, event: true },
       ...where,
@@ -59,12 +60,20 @@ export class EventsParticipationService {
   }
 
   async remove(id: number) {
-    const event = await this.findOneById(id);
-    if (!event) {
+    const participation = await this.findOneById(id);
+    if (!participation) {
       throw new NotFoundException(
         EVENTS_EXCEPTION_MESSAGES.EVENT_PARTICIPATION_NOT_FOUND,
       );
     }
-    return this.eventParticipationRepository.remove(event);
+    return this.eventParticipationRepository.remove(participation);
+  }
+
+  async removeAllForEvent(event: Event) {
+    const participations = await this.findAll({ event });
+    if (!participations) {
+      return;
+    }
+    await this.eventParticipationRepository.remove(participations);
   }
 }

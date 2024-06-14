@@ -120,7 +120,7 @@ const EventLocationMap = ({
   selectedEvent,
   onLocationClick,
 }: EventLocationMapProps) => {
-  const [map, setMap] = useState(null);
+  const [map, setMap] = useState<any>(null);
 
   let validClassName = '';
   const showValidationInfo = errorText !== '' && isValidated;
@@ -147,7 +147,6 @@ const EventLocationMap = ({
             onLocationClick={onLocationClick}
             eventLocation={position}
           />
-
           {map ? (
             <DisplayEventPosition
               map={map}

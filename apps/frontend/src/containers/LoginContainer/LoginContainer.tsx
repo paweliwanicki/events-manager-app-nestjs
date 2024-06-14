@@ -58,7 +58,11 @@ const LoginContainer = () => {
 
   return (
     <div className={classes.loginContainer}>
-      {isFetching && <LoadingSpinner />}
+      {isFetching && (
+        <LoadingSpinner
+          message={activeForm === 'SIGN_UP' ? 'Signing up' : 'Signing in'}
+        />
+      )}
       {activeForm === 'SIGN_UP' ? (
         <SignUpForm onSubmit={handleSignUpOnSubmit} />
       ) : (

@@ -4,11 +4,13 @@ import { Event } from '../entities/event.entity';
 import { ILike, Repository } from 'typeorm';
 import { EVENTS_EXCEPTION_MESSAGES } from '../events-messages';
 import { FiltersEventDto } from '../dtos/filters-event.dto';
+import { EventsParticipationService } from './events-participation.service';
 
 @Injectable()
 export class EventsService {
   constructor(
     @InjectRepository(Event) private eventRepository: Repository<Event>,
+    private eventsParticipationService: EventsParticipationService,
   ) {}
 
   async create(event: Partial<Event>) {
@@ -59,6 +61,7 @@ export class EventsService {
     if (!event) {
       throw new NotFoundException(EVENTS_EXCEPTION_MESSAGES.NOT_FOUND);
     }
+    await this.eventsParticipationService.removeAllForEvent(event);
     return this.eventRepository.remove(event);
   }
 }

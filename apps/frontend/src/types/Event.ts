@@ -1,3 +1,5 @@
+import { RefObject } from 'react';
+
 export type Event = {
   id: number;
   name: string;
@@ -13,4 +15,5 @@ export type Event = {
   createdAt: number;
   archived: boolean;
   participationId?: number;
+  listItemRef: RefObject<HTMLLIElement> | null;
 };

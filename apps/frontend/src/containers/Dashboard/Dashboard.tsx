@@ -24,11 +24,11 @@ const DisplayEventPosition = ({
   return null;
 };
 
-const center = { lat: 51.11117431307491, lng: 17.0354175567627 }; // Wroclaw
+const center = { lat: 51.11117431307491, lng: 17.0354175567627 };
 
 const Dashboard = () => {
   const { events } = useEvents();
-  const [map, setMap] = useState(null);
+  const [map, setMap] = useState<any>();
   const [showAddEditEventModal, setShowAddEditEventModal] =
     useState<boolean>(false);
   const [showRemoveEventModal, setShowRemoveEventModal] =
@@ -42,10 +42,8 @@ const Dashboard = () => {
 
   const handleSelectEvent = useCallback((event: Event) => {
     setSelectedEvent(event);
-    const selectedEventElement = document.querySelector(
-      `#event-li-${event.id}`
-    );
-    selectedEventElement?.scrollIntoView({
+    const { listItemRef } = event;
+    listItemRef?.current?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
     });

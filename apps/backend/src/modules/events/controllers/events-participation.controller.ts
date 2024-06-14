@@ -30,7 +30,7 @@ export class EventsParticipationController {
   @Get()
   async findParticipatedEvents(@CurrentUser() user: User) {
     const eventsParticipations = await this.eventsParticipationService.findAll({
-      where: { user },
+      user,
     });
     const data = eventsParticipations.flatMap(({ id, event }) => ({
       participationId: id,

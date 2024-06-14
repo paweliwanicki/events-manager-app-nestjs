@@ -7,9 +7,9 @@ WORKDIR /app/frontend
 COPY . .
 RUN chown -R node:node /app/frontend/
 USER node
-RUN pnpm install --verbose
-RUN pnpm run build
+RUN npm install --verbose
+RUN npm run build
 RUN chmod -R 777 /app/frontend/node_modules
 
 EXPOSE 5173
-CMD [ "pnpm", "run", "dev" ]
+CMD [ "npm", "run", "preview" ]

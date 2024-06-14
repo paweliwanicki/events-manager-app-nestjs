@@ -1,5 +1,5 @@
 export const USER_COOKIE_KEY = 'events_manager_user_666';
-export const COOKIES_EXPIRE_TIME = 90000;
+export const COOKIES_EXPIRE_TIME = 900000;
 
 const getUserCookie = () => {
   const timestamp = Date.now();
