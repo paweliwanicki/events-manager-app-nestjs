@@ -28,14 +28,7 @@ const EventsList = ({
 }: EventsListProps) => {
   const { handleShowSnackBar } = useSnackBar();
   const { user } = useUser();
-  const {
-    participatedEvents,
-    isFetching,
-    joinEvent,
-    leaveEvent,
-    getEvents,
-    getParticipatedEvents,
-  } = useEvents();
+  const { isFetching, joinEvent, leaveEvent, getEvents } = useEvents();
 
   const handleSelectEvent = useCallback(
     (event: Event) => {
@@ -67,17 +60,10 @@ const EventsList = ({
         'Successfully join the event!',
         ResponseStatus.SUCCESS
       );
-      await getParticipatedEvents();
-      getEvents(selectedTab);
+      await getEvents(selectedTab);
       return true;
     },
-    [
-      joinEvent,
-      handleShowSnackBar,
-      getEvents,
-      getParticipatedEvents,
-      selectedTab,
-    ]
+    [joinEvent, handleShowSnackBar, getEvents, selectedTab]
   );
 
   const handleLeaveEvent = useCallback(
@@ -94,17 +80,10 @@ const EventsList = ({
         'Successfully leave the event!',
         ResponseStatus.SUCCESS
       );
-      await getParticipatedEvents();
-      getEvents(selectedTab);
+      await getEvents(selectedTab);
       return true;
     },
-    [
-      leaveEvent,
-      handleShowSnackBar,
-      getEvents,
-      getParticipatedEvents,
-      selectedTab,
-    ]
+    [leaveEvent, handleShowSnackBar, getEvents, selectedTab]
   );
 
   const EVENT_MENU_OPTIONS: ContextMenuOption[] = useMemo(
@@ -130,15 +109,10 @@ const EventsList = ({
           data.map((event: Event) => {
             const showSettingsBtn =
               user !== undefined && selectedTab === EventNavigationTab.My;
-            const participation = participatedEvents.find(
-              (participatedEvent: Event) => participatedEvent.id === event.id
-            );
-
             return (
               <EventsListItem
                 key={`event-list-item-${event.id}`}
                 event={event}
-                participation={participation}
                 showSettingsBtn={showSettingsBtn}
                 selectedEvent={selectedEvent}
                 onJoinEvent={handleJoinEvent}

@@ -32,11 +32,12 @@ import { existsSync, mkdirSync } from 'fs';
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
-  @Get('/getuser')
-  @Serialize(UserDto)
+  @Get('/checkLoggedUser')
   @UseGuards(JwtAuthGuard)
-  async getUser(@CurrentUser() user: User) {
-    return user;
+  async checkLoggedUser(@CurrentUser() user: User, @Res() response: Response) {
+    response.send({
+      validUser: user ? true : false,
+    });
   }
 
   @Post('/signup')

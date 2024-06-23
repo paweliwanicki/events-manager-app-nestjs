@@ -60,14 +60,22 @@ export class EventsController {
   }
 
   @Get('/public')
-  async findEvents(@Body() filters: FiltersEventDto) {
+  async findEvents(
+    @Body() filters: FiltersEventDto,
+    @CurrentUser() user: User,
+  ) {
     filters.isPrivate = false;
+    filters.user = user;
     return { data: await this.eventsService.findAll(filters) };
   }
 
   @Get('/private')
-  async findpPrivateEvents(@Body() filters: FiltersEventDto) {
+  async findpPrivateEvents(
+    @Body() filters: FiltersEventDto,
+    @CurrentUser() user: User,
+  ) {
     filters.isPrivate = true;
+    filters.user = user;
     return { data: await this.eventsService.findAll(filters) };
   }
 

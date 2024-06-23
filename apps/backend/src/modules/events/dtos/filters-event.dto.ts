@@ -1,6 +1,7 @@
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 import { FindOperator } from 'typeorm';
 import { EventLocation } from '../entities/event.entity';
+import { User } from 'src/modules/users/entities/user.entity';
 
 export class FiltersEventDto {
   @IsString()
@@ -28,4 +29,7 @@ export class FiltersEventDto {
 
   @IsOptional()
   participatedUsers: boolean;
+
+  @IsOptional()
+  user: User;
 }
